@@ -9,11 +9,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 05.08.2004 - 00:59:57
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/08/06 00:55:33 $
+ * Last modified: $Date: 2004/09/24 22:35:41 $
  * 
  * $Log: LoginAutomation.java,v $
+ * Revision 1.2  2004/09/24 22:35:41  danielgalan
+ * extented examples a liite bit
+ *
  * Revision 1.1  2004/08/06 00:55:33  danielgalan
  * prepare release
  *
@@ -21,17 +24,16 @@
 package net.sf.jalita.examples.login;
 
 import net.sf.jalita.ui.automation.FormAutomationSet;
-import net.sf.jalita.ui.forms.BasicForm;
 
 
 
 /**
- * Example of ..
+ * Example: Simple Automation, which simulates a simple login ..
  * 
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
-public class LoginAutomation extends FormAutomationSet{
+public class LoginAutomation extends FormAutomationSet {
 
     //--------------------------------------------------------------------------
     // constants
@@ -41,6 +43,7 @@ public class LoginAutomation extends FormAutomationSet{
 
     public final static int ACTION_FINISHED = 1;
     public final static int ACTION_LOGIN = 2;
+    public final static int ACTION_RESET = 3;
 
 
 
@@ -59,7 +62,8 @@ public class LoginAutomation extends FormAutomationSet{
     //--------------------------------------------------------------------------
     // instance variables
     //--------------------------------------------------------------------------
-    LoginForm loginForm;
+
+    private LoginForm loginForm;
 
 
 
@@ -73,9 +77,7 @@ public class LoginAutomation extends FormAutomationSet{
 
     protected void initAutomationSet() {
         loginForm = new LoginForm(this);
-
         addForm(STATE_LOGIN, loginForm);
-
         setInitState(STATE_LOGIN);
     }
     
@@ -90,6 +92,14 @@ public class LoginAutomation extends FormAutomationSet{
         catch (InterruptedException e) {
         }
         
+        
+	    setState(STATE_LOGIN);
+    }
+
+
+
+    private void doActionReset() {
+        loginForm.resetFields();
 	    setState(STATE_LOGIN);
     }
 
@@ -107,7 +117,10 @@ public class LoginAutomation extends FormAutomationSet{
     	case ACTION_LOGIN:
     	    doActionLogin();
     	    break;
-        }
+		case ACTION_RESET:
+		    doActionReset();
+		    break;
+    	}
     }
 
 

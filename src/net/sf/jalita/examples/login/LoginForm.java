@@ -9,11 +9,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 05.08.2004 - 01:05:05
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/08/06 00:55:33 $
+ * Last modified: $Date: 2004/09/24 22:35:41 $
  * 
  * $Log: LoginForm.java,v $
+ * Revision 1.2  2004/09/24 22:35:41  danielgalan
+ * extented examples a liite bit
+ *
  * Revision 1.1  2004/08/06 00:55:33  danielgalan
  * prepare release
  *
@@ -21,7 +24,6 @@
 package net.sf.jalita.examples.login;
 
 import net.sf.jalita.io.TerminalEvent;
-import net.sf.jalita.test.misc.TestAutomation;
 import net.sf.jalita.ui.automation.FormAutomationSet;
 import net.sf.jalita.ui.forms.BasicForm;
 import net.sf.jalita.ui.widgets.ButtonListener;
@@ -33,10 +35,10 @@ import net.sf.jalita.ui.widgets.TextFieldWidget;
 
 
 /**
- * class desciption. Purpose, functionality, etc..
+ * Example: FormLayout and events for Login
  * 
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LoginForm extends BasicForm {
 
@@ -80,6 +82,13 @@ public class LoginForm extends BasicForm {
     //--------------------------------------------------------------------------
     // private & protected methods
     //--------------------------------------------------------------------------
+    
+    protected void resetFields() {
+        textName.setText("");
+        textPass.setText("");
+    }
+
+
 
     //--------------------------------------------------------------------------
     // public methods
@@ -101,6 +110,12 @@ public class LoginForm extends BasicForm {
             }
         });
 
+        buttonReset.addButtonListener(new ButtonListener() {
+            public void actionPerformed(TerminalEvent e) {
+                buttonResetActionPerfomed(e);
+            }
+        });
+
         addWidget(textName);
         addWidget(textPass);
         addWidget(labelName);
@@ -113,6 +128,17 @@ public class LoginForm extends BasicForm {
 
     public void buttonOkActionPerfomed(TerminalEvent e) {
         owner.doAction(LoginAutomation.ACTION_LOGIN);
+    }
+
+
+
+    public void buttonResetActionPerfomed(TerminalEvent e) {
+        owner.doAction(LoginAutomation.ACTION_RESET);
+
+        // resetFields();
+        // -> you could of course call such methods directly in the form,
+        // these is just to demonstrate the state's and action's in the automation.
+        // you should seperate logic and ui later that way, you decide
     }
 
 
