@@ -91,6 +91,9 @@
 				<attribute name="Licence-Version" value="2.1"/>
 			</manifest>
 		</jar>
+		<zip destfile="${dir.dist}/jalita-docs.zip" basedir="${dir.docs}">
+			
+		</zip>
 	</target>
 
 
