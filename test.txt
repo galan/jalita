@@ -1,0 +1,18 @@
+/***********************************************************************
+ * 
+ *  
+ * Revision:      $Revision: 1.1 $
+ * Checked in by: $Author: danielgalan $
+ * Last modified: $Date: 2004/07/25 21:09:43 $
+ * 
+ * $Log: test.txt,v $
+ * Revision 1.1  2004/07/25 21:09:43  danielgalan
+ * inital testcommit
+ *
+ **********************************************************************/
+/**
+ * bla
+ *
+ * @author  Daniel "tentacle" Galán y Martins
+ * @version $Revision: 1.1 $
+ */
