@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 30.04.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2004/08/06 00:55:34 $
  * 
  * $Log: VT100Constants.java,v $
+ * Revision 1.2  2004/08/06 00:55:34  danielgalan
+ * prepare release
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -26,8 +29,8 @@ package net.sf.jalita.io;
 /**
  * Constants of the VT100 specification (see http://vt100.net/docs/vt100-ug)
  *
- * @author  Daniel Galán y Martins [DG]
- * @version 1.0
+ * @author  Daniel "tentacle" Galán y Martins
+ * @version $Revision: 1.2 $
  */
 
 public interface VT100Constants {

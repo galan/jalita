@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 01.07.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2004/08/06 00:55:34 $
  * 
  * $Log: Jalita.java,v $
+ * Revision 1.2  2004/08/06 00:55:34  danielgalan
+ * prepare release
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -34,7 +37,7 @@ import net.sf.jalita.server.SessionManager;
  * Jalita main class - this is where all starts
  *
  * @author Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Jalita {
 
@@ -140,6 +143,7 @@ public class Jalita {
     	}
     	catch (Exception ex) {
     		ex.printStackTrace();
+    		System.exit(-1);
     	}
 
         // Load programm settings

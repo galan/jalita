@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 13.05.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:27 $
+ * Last modified: $Date: 2004/08/06 00:55:34 $
  * 
  * $Log: ListWidget.java,v $
+ * Revision 1.2  2004/08/06 00:55:34  danielgalan
+ * prepare release
+ *
  * Revision 1.1  2004/07/26 21:40:27  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -34,8 +37,8 @@ import net.sf.jalita.io.TerminalIOInterface;
 /**
  * Abstract class for widgets that represent a list
  *
- * @author  Daniel Galán y Martins [DG]
- * @version 1.0
+ * @author  Daniel "tentacle" Galán y Martins
+ * @version $Revision: 1.2 $
  */
 public class ListWidget extends BasicWidget {
 

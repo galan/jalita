@@ -2,7 +2,7 @@
 
 <project name="jalita" default="build">
 
-	<property name="version" value="1.0"/>
+	<property name="version" value="0.1"/>
 
 	<property name="dir.working" location="."/>
 	<property name="dir.lib" location="${dir.working}/lib"/>
@@ -31,12 +31,7 @@
 
 
 
-	<target name="build" depends="clean, compile, test">
-	</target>
-
-
-
-	<target name="build.docs">
+	<target name="build" depends="clean, compile, tests">
 	</target>
 
 
@@ -76,7 +71,7 @@
 
 
 
-	<target name="release" depends="build, doc">
+	<target name="release" depends="build, build.docs">
 		<jar destfile="${dir.dist}/jalita.jar"
 		     index="true"
 		     basedir="${dir.classes}"
@@ -91,23 +86,19 @@
 				<attribute name="Licence-Version" value="2.1"/>
 			</manifest>
 		</jar>
-		<zip destfile="${dir.dist}/jalita-docs.zip" basedir="${dir.docs}">
-			
+		<zip destfile="${dir.dist}/jalita-${version}.zip">
+			<zipfileset file="${dir.working}/lgpl.txt"/>
+			<zipfileset file="${dir.dist}/jalita.jar" prefix="bin"/>
+			<zipfileset dir="${dir.docs}" prefix="docs"/>
+			<zipfileset dir="${dir.src}" prefix="src"/>
 		</zip>
 	</target>
 
 
 
-	<target name="doc">
+	<target name="build.docs">
 		<delete dir="${dir.docs}"/>
 		<mkdir dir="${dir.docs}"/>
-		<!--
-		<copy todir="${dir.docs}">
-			<fileset dir="${workingdir}/src/">
-				<include name="**/*.gif"/>
-			</fileset>
-		</copy>
-		-->
 		<javadoc sourcepath="${dir.src}"
 			destdir="${dir.docs}"
 			packagenames="net.sf.jalita.*"
@@ -120,18 +111,18 @@
 			Author="on"
 			Splitindex="on"
 			Overview="${dir.src}/overview.html"
-			link="http://java.sun.com/j2se/1.4.1/docs/api/"
+			link="http://java.sun.com/j2se/1.4.2/docs/api/"
 			Windowtitle="Jalita API Documentation"
 			Doctitle="Jalita, Version ${version}"
 			header="Jalita"
 			footer="(c)2004 Daniel 'tentacle' Galán y Martins, Hamburg">
-			<link href="http://java.sun.com/j2se/1.4.1/docs/api/"/>
+			<link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
 		</javadoc>
 	</target>
 
 
 
-	<target name="test">
+	<target name="tests">
 		<junittask printsummary="on" haltonfailure="on" fork="yes" dir="${dir.classes}">
 			<jvmarg value="-Dfile.encoding=ISO-8859-1"/>
 			<classpath>
