@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 30.04.2003
  *  
- * Revision:      $Revision: 1.2 $
+ * Revision:      $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/08/06 00:55:34 $
+ * Last modified: $Date: 2004/12/05 17:53:49 $
  * 
  * $Log: VT100Constants.java,v $
+ * Revision 1.3  2004/12/05 17:53:49  danielgalan
+ * Refactored this damn beepError thing
+ *
  * Revision 1.2  2004/08/06 00:55:34  danielgalan
  * prepare release
  *
@@ -30,7 +33,7 @@ package net.sf.jalita.io;
  * Constants of the VT100 specification (see http://vt100.net/docs/vt100-ug)
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 public interface VT100Constants {
@@ -52,10 +55,13 @@ public interface VT100Constants {
     public final static String DELIMITER = ";";
 
     /** Carriage Return */
-    public static final int CR = 13;  // '\n' == 0D
+    public final static int CR = 13;  // '\n' == 0D
 
     /** Line Feed */
-    public static final int LF = 10;  // '\f' == 0A
+    public final static int LF = 10;  // '\f' == 0A
+
+    /** Control-Sequence for error tone */
+    public final static String BEEP_ERROR = ""+'\07';
 
 
 

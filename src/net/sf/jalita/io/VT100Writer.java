@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 30.04.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:27 $
+ * Last modified: $Date: 2004/12/05 17:53:49 $
  * 
  * $Log: VT100Writer.java,v $
+ * Revision 1.2  2004/12/05 17:53:49  danielgalan
+ * Refactored this damn beepError thing
+ *
  * Revision 1.1  2004/07/26 21:40:27  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -31,7 +34,7 @@ import net.sf.jalita.application.Configuration;
  * VT100-compatible stream writer, almost.
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class VT100Writer extends Writer implements VT100Constants {
 
@@ -404,6 +407,25 @@ public class VT100Writer extends Writer implements VT100Constants {
             }
             writeText(sb.toString());
         }
+    }
+
+
+
+    /** Makes an errortone */
+    public void beepError() throws IOException {
+        Thread worker = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.sleep(500);
+                    writeText(BEEP_ERROR);
+                    flush();
+                }
+                catch (Exception ex) {
+                    log.error(ex);
+                }
+            }
+        });
+        worker.start();
     }
 
 

@@ -10,17 +10,21 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 06.05.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:29 $
+ * Last modified: $Date: 2004/12/05 17:53:50 $
  * 
  * $Log: FormAutomationSet.java,v $
+ * Revision 1.2  2004/12/05 17:53:50  danielgalan
+ * Refactored this damn beepError thing
+ *
  * Revision 1.1  2004/07/26 21:40:29  danielgalan
  * Jalita initial cvs commit :)
  *
  **********************************************************************/
 package net.sf.jalita.ui.automation;
 
+import java.io.IOException;
 import java.util.Hashtable;
 import org.apache.log4j.Logger;
 import net.sf.jalita.ui.forms.BasicForm;
@@ -37,7 +41,7 @@ import net.sf.jalita.ui.forms.OptionForm;
  * This abstract class represents the parent for all classes, that define flows for forms.   
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class FormAutomationSet {
 
@@ -61,9 +65,6 @@ public abstract class FormAutomationSet {
     /** Carriage Return - LineFeed */
     protected final static String CRLF = "\r\n";
 
-
-    /** Control-Sequence for error tone */
-    public static final String BEEP_ERROR = ""+'\07';
 
 
     //--------------------------------------------------------------------------
@@ -324,7 +325,12 @@ public abstract class FormAutomationSet {
         if (ex != null) {
             log.error(ex);
         }
-        beepError();
+        try {
+            getIO().beepError();
+        }
+        catch (IOException ioex) {
+            log.error("Beep could not be send", ioex);
+        }
     }
 
 
@@ -355,30 +361,5 @@ public abstract class FormAutomationSet {
         addForm(STATE_DIALOG, dialogForm);
         setState(STATE_DIALOG);
     }
-
-
-    /** Makes an errortone */
-    public void beepError() {
-    	// TODO remove beep from here (auuu mann arne, tststs)
-        try {
-            Thread worker = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Thread.sleep(400);
-                        getIO().writeText(BEEP_ERROR);
-                        getIO().flush();
-                    }
-                    catch (Exception ex) {
-                        log.error(ex);
-                    }
-                }
-            });
-            worker.start();
-        }
-        catch( Exception ex ) {
-            log.error(ex);
-        }
-    }
-
 
 }

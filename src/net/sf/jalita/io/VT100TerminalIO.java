@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2004/12/05 17:53:49 $
  * 
  * $Log: VT100TerminalIO.java,v $
+ * Revision 1.2  2004/12/05 17:53:49  danielgalan
+ * Refactored this damn beepError thing
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -32,7 +35,7 @@ import net.sf.jalita.application.Configuration;
  * a VT100-compatible terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class VT100TerminalIO extends BasicTerminalIO {
@@ -227,6 +230,13 @@ public class VT100TerminalIO extends BasicTerminalIO {
     /** reads the next event from the reader */
     public TerminalEvent readNextEvent() throws IOException {
         return in.readNextEvent();
+    }
+
+
+
+    /** Makes an errortone */
+    public void beepError() throws IOException {
+        out.beepError();
     }
 
 }
