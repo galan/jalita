@@ -9,11 +9,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 05.08.2004 - 01:05:05
  *  
- * Revision:      $Revision: 1.2 $
+ * Revision:      $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/09/24 22:35:41 $
+ * Last modified: $Date: 2004/12/05 17:51:36 $
  * 
  * $Log: LoginForm.java,v $
+ * Revision 1.3  2004/12/05 17:51:36  danielgalan
+ * extended the examples
+ *
  * Revision 1.2  2004/09/24 22:35:41  danielgalan
  * extented examples a liite bit
  *
@@ -38,7 +41,7 @@ import net.sf.jalita.ui.widgets.TextFieldWidget;
  * Example: FormLayout and events for Login
  * 
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class LoginForm extends BasicForm {
 
@@ -63,6 +66,8 @@ public class LoginForm extends BasicForm {
 
     private LabelWidget labelName;
     private LabelWidget labelPass;
+    private LabelWidget labelWrongLogin;
+    private LabelWidget	labelHint;
 
     private ButtonWidget buttonOk;
     private ButtonWidget buttonReset;
@@ -100,6 +105,8 @@ public class LoginForm extends BasicForm {
 
         labelName = new LabelWidget(this, "Name:", 3, 2);
         labelPass = new LabelWidget(this, "Pass:", 4, 2);
+        labelWrongLogin = new LabelWidget(this, "", 10, 2);
+        labelHint = new LabelWidget(this, "Try test/test", 12, 2);
 
         buttonOk = new ButtonWidget(this, "OK", 6, 2, 8);
         buttonReset = new ButtonWidget(this, "Reset", 6, 11, 8);
@@ -122,6 +129,8 @@ public class LoginForm extends BasicForm {
         addWidget(labelPass);
         addWidget(buttonOk);
         addWidget(buttonReset);
+        addWidget(labelWrongLogin);
+        addWidget(labelHint);
     }
 
 
@@ -137,8 +146,31 @@ public class LoginForm extends BasicForm {
 
         // resetFields();
         // -> you could of course call such methods directly in the form,
-        // these is just to demonstrate the state's and action's in the automation.
-        // you should seperate logic and ui later that way, you decide
+        // this is just to demonstrate the state's and action's in the automation.
+        // you should seperate logic and ui later that way
+    }
+    
+    
+    
+    public void setLoginWrong(boolean wrongInput) {
+        if (wrongInput) {
+            labelWrongLogin.setText("Wrong Name/Passw.!");
+        }
+        else {
+            labelWrongLogin.setText("");
+        }
+    }
+    
+    
+    
+    public String getUsername() {
+        return textName.getText();
+    }
+
+
+
+    public String getPassword() {
+        return textPass.getText(); 
     }
 
 
