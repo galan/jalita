@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="jalita" default="build">
+
+	<property name="version" value="1.0"/>
+
+	<property name="dir.working" location="."/>
+	<property name="dir.lib" location="${dir.working}/lib"/>
+	<property name="dir.support" location="${dir.lib}/support"/>
+	<property name="dir.classes" location="${dir.working}/classes"/>
+	<property name="dir.docs" location="${dir.working}/docs"/>
+	<property name="dir.dist" location="${dir.working}/dist"/>
+	<property name="dir.src" location="${dir.working}/src"/>
+
+
+
+	<path id="jalita.classpath">
+		<pathelement location="${dir.lib}/log4j-1.2.8.jar"/>
+		<pathelement location="${dir.lib}/junit.jar"/>
+		<pathelement location="${supportdir}/ant-junit.jar"/>
+	</path>
+
+
+
+	<taskdef name="junittask" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+  		<classpath>
+			<pathelement path="${dir.support}/ant-junit.jar"/>
+			<pathelement path="${dir.support}/junit.jar"/>
+		</classpath>
+	</taskdef>
+
+
+
+	<target name="build" depends="clean, compile, test">
+	</target>
+
+
+
+	<target name="build.docs">
+	</target>
+
+
+
+	<target name="clean">
+		<delete dir="${dir.classes}"/>
+		<mkdir dir="${dir.classes}"/>
+		<delete dir="${dir.dist}"/>
+		<mkdir dir="${dir.dist}"/>
+		<delete dir="${dir.docs}"/>
+	</target>
+
+
+
+	<target name="compile">
+		<javac srcdir="${dir.src}"
+		       destdir="${dir.classes}"
+		       classpathref="jalita.classpath"
+		       source="1.4"
+		       debug="on"
+		       fork="yes"
+			   encoding="ISO-8859-1"
+		       debuglevel="lines,vars,source"
+		       deprecation="on"/>
+		<antcall target="copy-config"/>
+	</target>
+	
+
+
+	<target name="copy-config">
+		<copy todir="${dir.classes}">
+		      <fileset dir="${dir.src}">
+		        	<include name="**/*.properties"/>
+		      </fileset>
+		</copy>
+	</target>
+
+
+
+	<target name="release" depends="build, doc">
+		<jar destfile="${dir.dist}/jalita.jar"
+		     index="true"
+		     basedir="${dir.classes}"
+		     excludes="/**/test/*">
+			<manifest>
+				<attribute name="Manifest-Version" value="1.0"/>
+				<attribute name="Created-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="net.sf.jalita.Jalita"/>
+				<attribute name="Implementation-Title" value="Jalita"/>
+				<attribute name="Implementation-Version" value="${version}"/>
+				<attribute name="Licence-Name" value="LGPL (GNU LESSER GENERAL PUBLIC LICENSE)"/>
+				<attribute name="Licence-Version" value="2.1"/>
+			</manifest>
+		</jar>
+	</target>
+
+
+
+	<target name="doc">
+		<delete dir="${dir.docs}"/>
+		<mkdir dir="${dir.docs}"/>
+		<!--
+		<copy todir="${dir.docs}">
+			<fileset dir="${workingdir}/src/">
+				<include name="**/*.gif"/>
+			</fileset>
+		</copy>
+		-->
+		<javadoc sourcepath="${dir.src}"
+			destdir="${dir.docs}"
+			packagenames="net.sf.jalita.*"
+			classpathref="jalita.classpath"
+			source="1.4"
+			Private="off"
+			Protected="on"
+			Version="on"
+			Use="on"
+			Author="on"
+			Splitindex="on"
+			Overview="${dir.src}/overview.html"
+			link="http://java.sun.com/j2se/1.4.1/docs/api/"
+			Windowtitle="Jalita API Documentation"
+			Doctitle="Jalita, Version ${version}"
+			header="Jalita"
+			footer="(c)2004 Daniel 'tentacle' Galán y Martins, Hamburg">
+			<link href="http://java.sun.com/j2se/1.4.1/docs/api/"/>
+		</javadoc>
+	</target>
+
+
+
+	<target name="test">
+		<junittask printsummary="on" haltonfailure="on" fork="yes" dir="${dir.classes}">
+			<jvmarg value="-Dfile.encoding=ISO-8859-1"/>
+			<classpath>
+				<path refid="jalita.classpath"/>
+				<pathelement location="${dir.classes}"/>
+			</classpath>
+			<formatter type="xml"/>
+			<!-- <test name="net.sf.jalita.test.UnitTest"/> -->
+		</junittask>
+	</target>
+
+</project>
