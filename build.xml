@@ -2,7 +2,7 @@
 
 <project name="jalita" default="build">
 
-	<property name="version" value="0.1"/>
+	<property name="version" value="1.0"/>
 
 	<property name="dir.working" location="."/>
 	<property name="dir.lib" location="${dir.working}/lib"/>
