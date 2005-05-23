@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 01.07.2003
  *  
- * Revision:      $Revision: 1.2 $
+ * Revision:      $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/08/06 00:55:34 $
+ * Last modified: $Date: 2005/05/23 18:10:20 $
  * 
  * $Log: Jalita.java,v $
+ * Revision 1.3  2005/05/23 18:10:20  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.2  2004/08/06 00:55:34  danielgalan
  * prepare release
  *
@@ -30,6 +33,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import net.sf.jalita.server.SocketConnectionListener;
 import net.sf.jalita.server.SessionManager;
+import net.sf.jalita.ui.automation.FormAutomationSet;
+import net.sf.jalita.util.Configuration;
+import net.sf.jalita.util.ConfigurationException;
 
 
 
@@ -37,7 +43,7 @@ import net.sf.jalita.server.SessionManager;
  * Jalita main class - this is where all starts
  *
  * @author Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Jalita {
 
@@ -91,7 +97,7 @@ public class Jalita {
     //--------------------------------------------------------------------------
 
     /** Socket-Listener, which is waiting for incoming connections */
-    private SocketConnectionListener cl;
+    protected SocketConnectionListener cl;
 
     /** Listener thread */
     private Thread listenerThread;
@@ -118,6 +124,32 @@ public class Jalita {
     }
 
 
+
+    //--------------------------------------------------------------------------
+    // private & protected methods
+    //--------------------------------------------------------------------------
+
+    /** Validates the configuration values */
+    private static void checkConfiguration(Configuration config) throws ConfigurationException {
+        try {
+            Object obj = config.getSessionInitFormAutomation().newInstance();
+            if (!(obj instanceof FormAutomationSet)) {
+                throw new ConfigurationException("Initial FormAutomation could not be instanced!");
+            }
+
+            // Validate integer values can be correctly converted
+            config.getServerCleanupInterval();
+            config.getServerPort();
+            config.getSessionTimeOut();
+        }
+        catch (Exception ex) {
+            log.error(ex);
+            throw new ConfigurationException(ex.getMessage());
+        }
+    }
+
+
+
     //--------------------------------------------------------------------------
     // public methods
     //--------------------------------------------------------------------------
@@ -126,9 +158,9 @@ public class Jalita {
     public void terminateJalita() {
         System.exit(0);
     }
-
     
-
+    
+    
     //--------------------------------------------------------------------------
     // main method
     //--------------------------------------------------------------------------
@@ -150,7 +182,7 @@ public class Jalita {
         Configuration config = Configuration.getConfiguration();
 
         try {
-            config.checkConfiguration();
+            Jalita.checkConfiguration(config);
 
             try {
             	log.info("Starting " + config.getApplicationName() +

@@ -12,14 +12,17 @@
  *  
  * Revision:      $Revision: 1.1 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2005/05/23 18:10:20 $
  * 
  * $Log: ConfigurationException.java,v $
+ * Revision 1.1  2005/05/23 18:10:20  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
  **********************************************************************/
-package net.sf.jalita.application;
+package net.sf.jalita.util;
 
 import org.apache.log4j.Logger;
 

@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 13.05.2003
  *  
- * Revision:      $Revision: 1.2 $
+ * Revision:      $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/08/06 00:55:34 $
+ * Last modified: $Date: 2005/05/23 18:10:19 $
  * 
  * $Log: ListWidget.java,v $
+ * Revision 1.3  2005/05/23 18:10:19  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.2  2004/08/06 00:55:34  danielgalan
  * prepare release
  *
@@ -38,7 +41,7 @@ import net.sf.jalita.io.TerminalIOInterface;
  * Abstract class for widgets that represent a list
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ListWidget extends BasicWidget {
 
@@ -127,7 +130,7 @@ public class ListWidget extends BasicWidget {
             this.model = model;
         }
 
-        selectedRow = (int)Math.ceil((float)getHeight() / 2f);
+        selectedRow = (int)Math.ceil(getHeight() / 2f);
         selectedIndex = 0;
         setCursor(getPositionLine() + selectedRow - 1, getPositionColumn());
         setDirty(true);

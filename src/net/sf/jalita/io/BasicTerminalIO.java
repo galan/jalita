@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:27 $
+ * Last modified: $Date: 2005/05/23 18:10:19 $
  * 
  * $Log: BasicTerminalIO.java,v $
+ * Revision 1.2  2005/05/23 18:10:19  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.1  2004/07/26 21:40:27  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -24,7 +27,8 @@ package net.sf.jalita.io;
 import java.io.*;
 import java.net.*;
 import org.apache.log4j.Logger;
-import net.sf.jalita.application.Configuration;
+
+import net.sf.jalita.util.Configuration;
 
 
 
@@ -32,7 +36,7 @@ import net.sf.jalita.application.Configuration;
  * Describes the basic functionality, which must be supported by each terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class BasicTerminalIO implements TerminalIOInterface {
 

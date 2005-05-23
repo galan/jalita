@@ -10,19 +10,20 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.07.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2005/05/23 18:10:19 $
  * 
  * $Log: OptionForm.java,v $
+ * Revision 1.2  2005/05/23 18:10:19  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
  **********************************************************************/
 package net.sf.jalita.ui.forms;
 
-import org.apache.log4j.Logger;
-import net.sf.jalita.application.Configuration;
 import net.sf.jalita.io.TerminalEvent;
 import net.sf.jalita.io.TerminalIOInterface;
 import net.sf.jalita.ui.automation.FormAutomationSet;
@@ -37,7 +38,7 @@ import net.sf.jalita.ui.widgets.ButtonListener;
  * Dialoge mit zwei Benutzer-Optionen
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class OptionForm extends BasicForm {
 
@@ -50,18 +51,6 @@ public class OptionForm extends BasicForm {
 
     public static final int ABORT_ABORT = 3;
     public static final int ABORT_BACK = 4;
-
-
-
-    //--------------------------------------------------------------------------
-    // class variables
-    //--------------------------------------------------------------------------
-
-    /** log4j reference */
-    public final static Logger log = Logger.getLogger(Configuration.class);
-
-    /** Jalita configuration-properties */
-    private static Configuration config = Configuration.getConfiguration();
 
 
 
@@ -92,9 +81,9 @@ public class OptionForm extends BasicForm {
     private int abortAction;
 
     /** Caption for confirm */
-    private int okLabel;
+    protected int okLabel;
     /** Caption for abort */
-    private int abortLabel;
+    protected int abortLabel;
 
 
     //--------------------------------------------------------------------------

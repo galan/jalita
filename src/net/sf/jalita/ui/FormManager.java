@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:29 $
+ * Last modified: $Date: 2005/05/23 18:10:20 $
  * 
  * $Log: FormManager.java,v $
+ * Revision 1.2  2005/05/23 18:10:20  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.1  2004/07/26 21:40:29  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -30,12 +33,12 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 
 import net.sf.jalita.ui.automation.FormAutomationSet;
-import net.sf.jalita.application.Configuration;
 import net.sf.jalita.server.Session;
 import net.sf.jalita.server.SessionObject;
 import net.sf.jalita.server.SessionManager;
 import net.sf.jalita.server.GlobalObject;
 import net.sf.jalita.ui.forms.*;
+import net.sf.jalita.util.Configuration;
 
 
 
@@ -44,7 +47,7 @@ import net.sf.jalita.ui.forms.*;
  * FormAutomationSets.
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class FormManager implements TerminalEventListener {
 

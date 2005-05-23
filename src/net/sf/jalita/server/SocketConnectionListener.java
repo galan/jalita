@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 25.04.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2005/05/23 18:10:20 $
  * 
  * $Log: SocketConnectionListener.java,v $
+ * Revision 1.2  2005/05/23 18:10:20  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -25,7 +28,8 @@ package net.sf.jalita.server;
 import java.io.*;
 import java.net.*;
 import org.apache.log4j.Logger;
-import net.sf.jalita.application.Configuration;
+
+import net.sf.jalita.util.Configuration;
 
 
 
@@ -34,7 +38,7 @@ import net.sf.jalita.application.Configuration;
  * to the SessionManager.
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public class SocketConnectionListener {

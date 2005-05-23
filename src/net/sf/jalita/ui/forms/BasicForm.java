@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 03.05.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2005/05/23 18:10:19 $
  * 
  * $Log: BasicForm.java,v $
+ * Revision 1.2  2005/05/23 18:10:19  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -22,7 +25,6 @@
 package net.sf.jalita.ui.forms;
 
 import java.util.Vector;
-import net.sf.jalita.application.Configuration;
 import net.sf.jalita.io.TerminalEventListener;
 import net.sf.jalita.ui.widgets.BasicWidget;
 import net.sf.jalita.io.TerminalEvent;
@@ -33,6 +35,8 @@ import java.io.IOException;
 import net.sf.jalita.ui.widgets.HeaderWidget;
 import net.sf.jalita.server.SessionObject;
 import net.sf.jalita.ui.widgets.KeyLabelWidget;
+import net.sf.jalita.util.Configuration;
+
 import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
@@ -42,7 +46,7 @@ import org.apache.log4j.Logger;
  * Skeletal structure for Form's
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 
 public abstract class BasicForm implements TerminalEventListener {
@@ -127,9 +131,9 @@ public abstract class BasicForm implements TerminalEventListener {
 
     /** Sets all widgets in the Form to dirty, so that all widgets will be repainted on next call of paint */
     private void setWidgetsDirty() {
-        Enumeration enum = widgets.elements();
-        while (enum.hasMoreElements()) {
-            BasicWidget bw = (BasicWidget)enum.nextElement();
+        Enumeration enumWidgets = widgets.elements();
+        while (enumWidgets.hasMoreElements()) {
+            BasicWidget bw = (BasicWidget)enumWidgets.nextElement();
             bw.setDirty(true);
         }
     }
@@ -194,15 +198,15 @@ public abstract class BasicForm implements TerminalEventListener {
 
     /** Focuses the first possible widget and returns it */
     public BasicWidget focusFirstPossibleWidget() {
-        Enumeration enum = widgets.elements();
+        Enumeration enumWidgets = widgets.elements();
 
         if (focusedWidget != null) {
             focusedWidget.focusLeft();
         }
 
         focusedWidget = null;
-        while (enum.hasMoreElements()) {
-            BasicWidget bw = (BasicWidget)enum.nextElement();
+        while (enumWidgets.hasMoreElements()) {
+            BasicWidget bw = (BasicWidget)enumWidgets.nextElement();
             if (bw.isFocusable()) {
                 focusedWidget = bw;
                 focusedWidget.focusEntered();
@@ -298,9 +302,9 @@ public abstract class BasicForm implements TerminalEventListener {
 
 
         // paint widgets
-        Enumeration enum = widgets.elements();
-        while (enum.hasMoreElements()) {
-            BasicWidget bw = (BasicWidget)enum.nextElement();
+        Enumeration enumWidgets = widgets.elements();
+        while (enumWidgets.hasMoreElements()) {
+            BasicWidget bw = (BasicWidget)enumWidgets.nextElement();
             if (bw.isDirty()) {
                 bw.redraw();
             }

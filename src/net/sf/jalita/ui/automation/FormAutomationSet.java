@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 06.05.2003
  *  
- * Revision:      $Revision: 1.2 $
+ * Revision:      $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/12/05 17:53:50 $
+ * Last modified: $Date: 2005/05/23 18:10:20 $
  * 
  * $Log: FormAutomationSet.java,v $
+ * Revision 1.3  2005/05/23 18:10:20  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.2  2004/12/05 17:53:50  danielgalan
  * Refactored this damn beepError thing
  *
@@ -28,12 +31,12 @@ import java.io.IOException;
 import java.util.Hashtable;
 import org.apache.log4j.Logger;
 import net.sf.jalita.ui.forms.BasicForm;
-import net.sf.jalita.application.Configuration;
 import net.sf.jalita.io.TerminalIOInterface;
 import net.sf.jalita.ui.FormManager;
 import net.sf.jalita.ui.forms.WaitScreenForm;
 import net.sf.jalita.ui.forms.ErrorForm;
 import net.sf.jalita.ui.forms.OptionForm;
+import net.sf.jalita.util.Configuration;
 
 
 
@@ -41,7 +44,7 @@ import net.sf.jalita.ui.forms.OptionForm;
  * This abstract class represents the parent for all classes, that define flows for forms.   
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class FormAutomationSet {
 

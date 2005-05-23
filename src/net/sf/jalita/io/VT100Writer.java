@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 30.04.2003
  *  
- * Revision:      $Revision: 1.2 $
+ * Revision:      $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/12/05 17:53:49 $
+ * Last modified: $Date: 2005/05/23 18:10:20 $
  * 
  * $Log: VT100Writer.java,v $
+ * Revision 1.3  2005/05/23 18:10:20  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.2  2004/12/05 17:53:49  danielgalan
  * Refactored this damn beepError thing
  *
@@ -26,7 +29,8 @@ package net.sf.jalita.io;
 
 import java.io.*;
 import org.apache.log4j.Logger;
-import net.sf.jalita.application.Configuration;
+
+import net.sf.jalita.util.Configuration;
 
 
 
@@ -34,7 +38,7 @@ import net.sf.jalita.application.Configuration;
  * VT100-compatible stream writer, almost.
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class VT100Writer extends Writer implements VT100Constants {
 

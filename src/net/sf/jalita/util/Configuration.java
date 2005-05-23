@@ -12,19 +12,21 @@
  *  
  * Revision:      $Revision: 1.1 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2005/05/23 18:10:20 $
  * 
  * $Log: Configuration.java,v $
+ * Revision 1.1  2005/05/23 18:10:20  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
  **********************************************************************/
-package net.sf.jalita.application;
+package net.sf.jalita.util;
 
 import java.util.Properties;
 import java.io.*;
 import org.apache.log4j.Logger;
-import net.sf.jalita.ui.automation.FormAutomationSet;
 
 
 
@@ -180,27 +182,6 @@ public class Configuration {
 
 
 
-    /** Validates the configuration values */
-    public void checkConfiguration() throws ConfigurationException {
-        try {
-            Object obj = getSessionInitFormAutomation().newInstance();
-            if (!(obj instanceof FormAutomationSet)) {
-                throw new ConfigurationException("Wrong Value for + " + PROP_SESSION_INIT_FORMAUTOMATION + "!");
-            }
-
-            // Validate if integer values are correct converted
-            getServerCleanupInterval();
-            getServerPort();
-            getSessionTimeOut();
-        }
-        catch (Exception ex) {
-            log.error(ex);
-            throw new ConfigurationException(ex.getMessage());
-        }
-    }
-
-
-
     //--------------------------------------------------------------------------
     // Getter/Setter of Constant-values
     //--------------------------------------------------------------------------
@@ -275,7 +256,7 @@ public class Configuration {
             c = Class.forName(init);
         }
         catch (ClassNotFoundException ex) {
-            c = net.sf.jalita.test.misc.TestAutomation.class;
+            // Simply return null
         }
 
         return c;

@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 04.05.2003
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:28 $
+ * Last modified: $Date: 2005/05/23 18:10:20 $
  * 
  * $Log: TerminalEvent.java,v $
+ * Revision 1.2  2005/05/23 18:10:20  danielgalan
+ * some cleaning and removing some cycles (not all removed yet)
+ *
  * Revision 1.1  2004/07/26 21:40:28  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -23,7 +26,8 @@ package net.sf.jalita.io;
 
 import java.util.EventObject;
 import org.apache.log4j.Logger;
-import net.sf.jalita.application.Configuration;
+
+import net.sf.jalita.util.Configuration;
 
 
 
@@ -32,7 +36,7 @@ import net.sf.jalita.application.Configuration;
  * Such an event could be a key is pressed or an barcode has been scanned.
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class TerminalEvent extends EventObject {
 
