@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 13.05.2003
  *  
- * Revision:      $Revision: 1.3 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:19 $
+ * Revision:      $Revision: 1.4 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2008/03/21 14:01:31 $
  * 
  * $Log: ListWidget.java,v $
+ * Revision 1.4  2008/03/21 14:01:31  ilgian
+ * Added methods to extend with MenuWidget
+ *
  * Revision 1.3  2005/05/23 18:10:19  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -41,7 +44,7 @@ import net.sf.jalita.io.TerminalIOInterface;
  * Abstract class for widgets that represent a list
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ListWidget extends BasicWidget {
 
@@ -356,5 +359,19 @@ public class ListWidget extends BasicWidget {
             // nada
         }
     }
+
+
+
+	public ListModel getListModel() {
+		return model;
+	}
+
+	protected int getSelectedRow() {
+		return selectedRow;
+	}
+
+	protected void setSelectedRow(int selectedRow) {
+		this.selectedRow = selectedRow;
+	}
 
 }
