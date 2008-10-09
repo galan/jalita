@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 03.05.2003
  *  
- * Revision:      $Revision: 1.2 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:19 $
+ * Revision:      $Revision: 1.3 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2008/10/09 12:30:20 $
  * 
  * $Log: BasicForm.java,v $
+ * Revision 1.3  2008/10/09 12:30:20  ilgian
+ * Added facilities to handle form's title
+ *
  * Revision 1.2  2005/05/23 18:10:19  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -46,7 +49,7 @@ import org.apache.log4j.Logger;
  * Skeletal structure for Form's
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 public abstract class BasicForm implements TerminalEventListener {
@@ -105,8 +108,7 @@ public abstract class BasicForm implements TerminalEventListener {
 
         initWidgets();
 
-        header = new HeaderWidget(this, headerText);
-        addWidget(header);
+        setTitle(headerText);
 
         focusFirstPossibleWidget();
     }
@@ -424,4 +426,23 @@ public abstract class BasicForm implements TerminalEventListener {
         }
     }
 
+    public String getTitle(){
+    	if(header != null)
+    		return header.getText();
+    	else 
+    		return null;
+    }
+    
+    public void setTitle(String title){
+    	if(header != null){
+    		header.setText(title);
+    	} else {
+    		header = new HeaderWidget(this, title);
+    		addWidget(header);
+    	}
+    }
+    
+    public Enumeration widgets(){
+    	return widgets.elements();
+    }
 }
