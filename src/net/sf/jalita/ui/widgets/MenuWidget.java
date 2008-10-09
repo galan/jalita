@@ -10,11 +10,14 @@
  * Author:   	  Gianluca Sartori
  * Creation date: 12.03.2008
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/03/21 14:01:57 $
+ * Last modified: $Date: 2008/10/09 15:24:15 $
  * 
  * $Log: MenuWidget.java,v $
+ * Revision 1.2  2008/10/09 15:24:15  ilgian
+ * Added support for numbered menu lists
+ *
  * Revision 1.1  2008/03/21 14:01:57  ilgian
  * New widget
  *
@@ -38,12 +41,17 @@ import net.sf.jalita.ui.forms.BasicForm;
  * Abstract class for widgets that represent a list
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class MenuWidget extends ListWidget {
 
+	private final static String NUMBERS = "0123456789";
+	
 	private int lastKeypressed = TerminalEvent.KEY_UNDEFINED;
 	private int topIndex = 0;
+	private boolean numbered = true;
+	private int lastIndex = 0;
+	
 
 
 	/** Creates a new ListWidget-Object */
@@ -83,6 +91,35 @@ public class MenuWidget extends ListWidget {
     /** Tastendruck verarbeiten */
     public void processKeyPressed(TerminalEvent e) {
     	lastKeypressed = e.getKey();
+    	int current = getSelectedIndex() + 1;
+    	if(numbered){
+	    	if(NUMBERS.indexOf(e.getKeyAsChar()) > 0){
+	    		int idx = Integer.valueOf(e.getKeyAsString()).intValue();
+	    		if(getListModel().getSize() < 10){
+	    			if(idx > getListModel().getSize()) idx = getListModel().getSize(); 
+	    			setSelectedIndex(idx - 1);
+	    		} else {
+	    			if(current < 10){
+	    				idx = (current * 10) + idx;
+	    			} else {
+	    				idx = ((current / 10) * 10) + idx;
+	    			}
+	    			if(idx > getListModel().getSize()) idx = getListModel().getSize();
+	    			setSelectedIndex(idx - 1);
+	    		}
+	    	}
+	    	else if(e.getKey() == TerminalEvent.KEY_BACKSPACE){
+	    		//delete last
+	    		if(current < 10){
+	    			setSelectedIndex(0);
+	    		} else {
+	    			setSelectedIndex((current / 10) - 1);
+	    		}
+	    	}
+	    	else if(e.getKey() == TerminalEvent.KEY_F04 || e.getKey() == TerminalEvent.KEY_DEL){
+	    		setSelectedIndex(0);
+	    	}
+    	}
        	super.processKeyPressed(e);
     }
     
@@ -90,8 +127,10 @@ public class MenuWidget extends ListWidget {
     	if(lastKeypressed == TerminalEvent.KEY_ENTER){
     		super.fireValueChanged(e);
     	} else {
-    		if(getSelectedIndex() >= topIndex + getHeight()){
-    			topIndex = getSelectedIndex() - getHeight() + 1;
+    		int lastVisible = getHeight();
+    		if(numbered) lastVisible--;
+    		if(getSelectedIndex() >= topIndex + lastVisible){
+    			topIndex = getSelectedIndex() - lastVisible + 1;
     		} 
     		else if(getSelectedIndex() < topIndex){
     			topIndex = getSelectedIndex();
@@ -111,8 +150,11 @@ public class MenuWidget extends ListWidget {
 			getIO().clearLine(getPositionLine(), getPositionColumn(), TerminalIOInterface.ORIENTATION_HORIZONTAL, getWidth());
 		}
 
-
-		for (int i = topIndex, j = 0; j < getHeight(); i++, j++) {
+		boolean footerDone = false;
+		int lastVisible = getHeight();
+		if(numbered) lastVisible--;
+		
+		for (int i = topIndex, j = 0; j < lastVisible; i++, j++) {
 			if ((i >= 0) && (i < getListModel().getSize())) {
 				Object obj = getListModel().getElementAt(i);
 
@@ -120,25 +162,42 @@ public class MenuWidget extends ListWidget {
 					String listText = null;
 					int maxWidth = isPositionCursorVisible() ? getWidth() - 2 : getWidth();
 
-					if (obj.toString().length() > maxWidth) {
-						listText = obj.toString().substring(0, maxWidth);
-					} else {
-						listText = obj.toString();
-					}
+					listText = obj.toString();
+					if(numbered) listText = (i + 1) + ". " + listText;
+					if (listText.length() > maxWidth) {
+						listText = listText.substring(0, maxWidth);
+					} 
 
+					if((j == (lastVisible - 1)) && numbered){
+						getIO().setUnderlined(true);
+						footerDone = true;
+					}
 					if ((i == getSelectedIndex()) && isFocused()) {
 						getIO().writeInverseText(padToWidth(listText), getPositionLine() + j, getPositionColumn());
 						setCursor(getPositionLine() + j, getPositionColumn());
 					}
 					else {
 						getIO().clearLine(getPositionLine() + j, getPositionColumn(), TerminalIOInterface.ORIENTATION_HORIZONTAL, getWidth());
-						getIO().writeText(listText, getPositionLine() + j, getPositionColumn());
+						getIO().writeText(padToWidth(listText), getPositionLine() + j, getPositionColumn());
 					}
+					getIO().setUnderlined(false);
 				}
 			} else {
 				getIO().clearLine(getPositionLine() + j, getPositionColumn(), TerminalIOInterface.ORIENTATION_HORIZONTAL, getWidth());
 			}
 		}
+		
+		if(numbered){
+			if(!footerDone){
+				getIO().setUnderlined(true);
+				getIO().writeText(padToWidth(""),getPositionLine() + getHeight() - 2,getPositionColumn());
+				getIO().setUnderlined(false);
+			}
+			getIO().writeText("F4:Canc F2:Esc",getPositionLine() + getHeight() - 1, 0);
+			getIO().writeText(">",getPositionLine() + getHeight() - 1, getPositionColumn() + getWidth() - 4);
+			getIO().writeText(new Integer(getSelectedIndex() + 1).toString(),getPositionLine() + getHeight() - 1, getPositionColumn() + getWidth() - 2);
+		}
+		
 		
 	}
 
@@ -161,5 +220,17 @@ public class MenuWidget extends ListWidget {
 		if(cursorVisible) 
 			throw new IllegalArgumentException("Position cursor cannot be visible in MenuWidget.");
 		super.setPositionCursorVisible(cursorVisible);
+	}
+
+
+
+	public boolean isNumbered() {
+		return numbered;
+	}
+
+
+
+	public void setNumbered(boolean numbered) {
+		this.numbered = numbered;
 	}
 }
