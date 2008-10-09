@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 06.05.2003
  *  
- * Revision:      $Revision: 1.3 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.4 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2008/10/09 15:20:51 $
  * 
  * $Log: FormAutomationSet.java,v $
+ * Revision 1.4  2008/10/09 15:20:51  ilgian
+ * Added getSession method
+ *
  * Revision 1.3  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -30,6 +33,8 @@ package net.sf.jalita.ui.automation;
 import java.io.IOException;
 import java.util.Hashtable;
 import org.apache.log4j.Logger;
+
+import net.sf.jalita.server.Session;
 import net.sf.jalita.ui.forms.BasicForm;
 import net.sf.jalita.io.TerminalIOInterface;
 import net.sf.jalita.ui.FormManager;
@@ -44,7 +49,7 @@ import net.sf.jalita.util.Configuration;
  * This abstract class represents the parent for all classes, that define flows for forms.   
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class FormAutomationSet {
 
@@ -363,6 +368,11 @@ public abstract class FormAutomationSet {
         OptionForm dialogForm = new OptionForm(owner, message, okLabel, abortLabel, okAction, abortAction);
         addForm(STATE_DIALOG, dialogForm);
         setState(STATE_DIALOG);
+    }
+    
+    /** Returns the Session */
+    public Session getSession(){
+    	return getOwner().getSession();
     }
 
 }
