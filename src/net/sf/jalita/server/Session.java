@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 27.03.2003
  *  
- * Revision:      $Revision: 1.2 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.3 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2008/10/09 10:23:00 $
  * 
  * $Log: Session.java,v $
+ * Revision 1.3  2008/10/09 10:23:00  ilgian
+ * Added support for session attributes
+ *
  * Revision 1.2  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -26,6 +29,8 @@ package net.sf.jalita.server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 import org.apache.log4j.Logger;
 import net.sf.jalita.io.*;
@@ -38,7 +43,7 @@ import net.sf.jalita.util.Configuration;
  * Represents a session to a terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 public class Session implements Runnable {
@@ -53,7 +58,7 @@ public class Session implements Runnable {
     /** Jalita configuration-properties */
     private static Configuration config = Configuration.getConfiguration();
 
-
+    private Map attributes = new HashMap();
 
     //--------------------------------------------------------------------------
     // instance variables
@@ -308,4 +313,12 @@ public class Session implements Runnable {
         log.info("Session-Thread closed on Node " + lokalIO);
     }
 
+    
+    public void setAttribute(String name, Object value){
+    	attributes.put(name.toLowerCase().trim(), value);
+    }
+    
+    public Object getAttribute(String name){
+    	return attributes.get(name.toLowerCase().trim());
+    }
 }
