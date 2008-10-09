@@ -10,11 +10,14 @@
  * Author:   	  Gianluca Sartori
  * Creation date: 21.03.2008
  *  
- * Revision:      $Revision: 1.1 $
+ * Revision:      $Revision: 1.2 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/03/21 14:02:27 $
+ * Last modified: $Date: 2008/10/09 13:19:45 $
  * 
  * $Log: MenuForm.java,v $
+ * Revision 1.2  2008/10/09 13:19:45  ilgian
+ * Added configuration parameters for width and height
+ *
  * Revision 1.1  2008/03/21 14:02:27  ilgian
  * New Form
  *
@@ -28,12 +31,13 @@ import net.sf.jalita.ui.widgets.MenuWidget;
 
 import net.sf.jalita.io.TerminalEvent;
 import net.sf.jalita.ui.automation.FormAutomationSet;
+import net.sf.jalita.util.Configuration;
 
 /**
  * Basic Menu Form
  *
  * @author  Gianluca Sartori
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class MenuForm extends BasicForm {
 
@@ -50,8 +54,7 @@ public abstract class MenuForm extends BasicForm {
 
    public void initWidgets() {
 	   Vector v = getMenuList();
-	   //TODO: don't like fixed width and height...
-	   menu = new MenuWidget(this, 2, 1, 20, 7, v, false);
+	   menu = new MenuWidget(this, 2, 1, Configuration.getConfiguration().getSessionWidth(), Configuration.getConfiguration().getSessionHeight(), v, false);
        addWidget(menu);
     }
 
@@ -61,6 +64,9 @@ public abstract class MenuForm extends BasicForm {
     public void processKeyPressed(TerminalEvent e) {
     	if(e.getKey() == TerminalEvent.KEY_ENTER){
     		owner.doAction(menu.getSelectedIndex()+1);
+    	}
+    	if(e.getKey() == TerminalEvent.KEY_F02){
+    		owner.doAction(FormAutomationSet.STATE_FINISHED);
     	}
     }
 
