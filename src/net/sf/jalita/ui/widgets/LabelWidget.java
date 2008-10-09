@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 06.05.2003
  *  
- * Revision:      $Revision: 1.1 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:27 $
+ * Revision:      $Revision: 1.2 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2008/10/09 15:23:33 $
  * 
  * $Log: LabelWidget.java,v $
+ * Revision 1.2  2008/10/09 15:23:33  ilgian
+ * Moved lastLenght calculation to paint method to avoid unexpected behavior after widget repaint
+ *
  * Revision 1.1  2004/07/26 21:40:27  danielgalan
  * Jalita initial cvs commit :)
  *
@@ -31,7 +34,7 @@ import net.sf.jalita.io.TerminalEvent;
  * A simple label
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class LabelWidget extends BasicWidget {
 
@@ -95,14 +98,14 @@ public class LabelWidget extends BasicWidget {
         if (inverse) {
             getIO().setReverse(false);
         }
+        lastLength = textLabel.length();
     }
 
 
 
     /** Sets the text */
     public void setText(String text) {
-        lastLength = textLabel.length();
-
+      
         setWidth(text.length());
 
         textLabel = text;
