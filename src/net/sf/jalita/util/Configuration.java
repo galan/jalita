@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 25.04.2003
  *  
- * Revision:      $Revision: 1.1 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.2 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2008/10/09 15:25:15 $
  * 
  * $Log: Configuration.java,v $
+ * Revision 1.2  2008/10/09 15:25:15  ilgian
+ * Added configuration entries for session width and height
+ *
  * Revision 1.1  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -34,7 +37,7 @@ import org.apache.log4j.Logger;
  * Configuration, read from the propertyfile, and global Constants
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Configuration {
 
@@ -56,7 +59,9 @@ public class Configuration {
     private final static String PROP_SESSION_TIMEOUT = "session.timeout";
     private final static String PROP_SESSION_INIT_FORMAUTOMATION = "session.init.formautomation";
     private final static String PROP_SESSION_INIT_TIMEBEFORECLEARBUFFER = "session.init.timebeforeclearbuffer";
-
+    private final static String PROP_SESSION_WIDTH = "session.init.width";
+    private final static String PROP_SESSION_HEIGHT = "session.init.height";
+    
     // common
     public final static String KEY_CRLF = "\r\n";
 
@@ -213,7 +218,31 @@ public class Configuration {
         properties.setProperty(PROP_SERVER_PORT, String.valueOf(port));
     }
 
+    
+    
+    public int getSessionHeight() {
+        String height = properties.getProperty(PROP_SESSION_HEIGHT);
+        if(height == null) height = "7";
+        return Integer.parseInt(height);
+    }
 
+    /** sets the default height of the forms in client display*/
+    public void setSessionHeight(int height) {
+        properties.setProperty(PROP_SESSION_HEIGHT, String.valueOf(height));
+    }
+    
+    
+    public int getSessionWidth() {
+        String width = properties.getProperty(PROP_SESSION_WIDTH);
+        if(width == null) width = "20"; 
+        return Integer.parseInt(width);
+    }
+
+    /** sets the default width of the forms in client display*/
+    public void setSessionWidth(int width) {
+        properties.setProperty(PROP_SESSION_WIDTH, String.valueOf(width));
+    }
+    
 
     /** time for keeping an session without activity connected, independent of an physically connection [ms] */
     public int getSessionTimeOut() {
