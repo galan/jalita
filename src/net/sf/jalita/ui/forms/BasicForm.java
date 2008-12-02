@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 03.05.2003
  *  
- * Revision:      $Revision: 1.3 $
+ * Revision:      $Revision: 1.4 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/10/09 12:30:20 $
+ * Last modified: $Date: 2008/12/02 13:13:32 $
  * 
  * $Log: BasicForm.java,v $
+ * Revision 1.4  2008/12/02 13:13:32  ilgian
+ * Added getHeader method
+ *
  * Revision 1.3  2008/10/09 12:30:20  ilgian
  * Added facilities to handle form's title
  *
@@ -49,7 +52,7 @@ import org.apache.log4j.Logger;
  * Skeletal structure for Form's
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 
 public abstract class BasicForm implements TerminalEventListener {
@@ -61,7 +64,7 @@ public abstract class BasicForm implements TerminalEventListener {
     /** Carriage Return / LineFeed */
     protected final static String CRLF = "\r\n";
 
-
+    
 
     //--------------------------------------------------------------------------
     // class variables
@@ -343,6 +346,7 @@ public abstract class BasicForm implements TerminalEventListener {
     }
 
 
+    
 
     /** Queries the widget if it has the focus */
     public boolean hasWidgetFocus(BasicWidget widget) {
@@ -409,7 +413,7 @@ public abstract class BasicForm implements TerminalEventListener {
             focusPreviousPossibleWidget();
             return;
         }
-
+        
         processKeyPressed(e);
 
         if (!e.isConsumed()) {
@@ -442,7 +446,13 @@ public abstract class BasicForm implements TerminalEventListener {
     	}
     }
     
-    public Enumeration widgets(){
+    public Enumeration<BasicWidget> widgets(){
     	return widgets.elements();
     }
+
+
+
+	public HeaderWidget getHeader() {
+		return header;
+	}
 }
