@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 15.05.2003
  *  
- * Revision:      $Revision: 1.2 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:19 $
+ * Revision:      $Revision: 1.3 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2008/12/02 13:15:15 $
  * 
  * $Log: WaitScreenForm.java,v $
+ * Revision 1.3  2008/12/02 13:15:15  ilgian
+ * Added parameter for screen width
+ *
  * Revision 1.2  2005/05/23 18:10:19  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -29,6 +32,7 @@ import net.sf.jalita.ui.automation.FormAutomationSet;
 import net.sf.jalita.io.TerminalEvent;
 import net.sf.jalita.io.TerminalIOInterface;
 import net.sf.jalita.ui.widgets.LineWidget;
+import net.sf.jalita.util.Configuration;
 
 
 
@@ -36,7 +40,7 @@ import net.sf.jalita.ui.widgets.LineWidget;
  * Waitscreen to let the user doze a while..
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class WaitScreenForm extends BasicForm {
 
@@ -55,8 +59,6 @@ public class WaitScreenForm extends BasicForm {
     private LineWidget line2;
     /** Inverse Line */
     private LineWidget line3;
-
-
 
     //--------------------------------------------------------------------------
     // constructors
@@ -78,13 +80,14 @@ public class WaitScreenForm extends BasicForm {
     public void initWidgets() {
         // insert Widgets
         /** @todo 20 durch getIO().getWidth() austauschen, derzeit */
-        line1 = new LineWidget(this, 2, 1, TerminalIOInterface.ORIENTATION_HORIZONTAL, 20);
-        line2 = new LineWidget(this, 3, 1, TerminalIOInterface.ORIENTATION_HORIZONTAL, 20);
-        line3 = new LineWidget(this, 4, 1, TerminalIOInterface.ORIENTATION_HORIZONTAL, 20);
+        line1 = new LineWidget(this, 2, 1, TerminalIOInterface.ORIENTATION_HORIZONTAL, Configuration.getConfiguration().getSessionWidth());
+        line2 = new LineWidget(this, 3, 1, TerminalIOInterface.ORIENTATION_HORIZONTAL, Configuration.getConfiguration().getSessionWidth());
+        line3 = new LineWidget(this, 4, 1, TerminalIOInterface.ORIENTATION_HORIZONTAL, Configuration.getConfiguration().getSessionWidth());
 
+        
         labelText = new LabelWidget(this, "Please wait", 3, 5);
         labelText.setInverse(true);
-
+        
         labelMessage = new LabelWidget(this, "...", 6, 1);
 
 
@@ -94,6 +97,9 @@ public class WaitScreenForm extends BasicForm {
         addWidget(line3);
         addWidget(labelText);
         addWidget(labelMessage);
+        
+        line1.setFocusable(false);
+        line2.setFocusable(false);
     }
 
 
