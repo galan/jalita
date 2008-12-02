@@ -10,11 +10,15 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 06.05.2003
  *  
- * Revision:      $Revision: 1.4 $
+ * Revision:      $Revision: 1.5 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/10/09 15:20:51 $
+ * Last modified: $Date: 2008/12/02 13:12:23 $
  * 
  * $Log: FormAutomationSet.java,v $
+ * Revision 1.5  2008/12/02 13:12:23  ilgian
+ * Fixed bug with wait screen
+ * Added extra CRLF to display wait message
+ *
  * Revision 1.4  2008/10/09 15:20:51  ilgian
  * Added getSession method
  *
@@ -49,7 +53,7 @@ import net.sf.jalita.util.Configuration;
  * This abstract class represents the parent for all classes, that define flows for forms.   
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public abstract class FormAutomationSet {
 
@@ -164,8 +168,9 @@ public abstract class FormAutomationSet {
         // Different BasicForm
         if (obj instanceof BasicForm) {
             this.state = state;
-
+            
             log.debug("call form entered on state " + state);
+            if (waitScreenActive) waitScreenActive = false;
             BasicForm bf = (BasicForm)stateToForm.get(new Integer(state));
             bf.formEntered();
             bf.markFormDirty();
@@ -305,7 +310,7 @@ public abstract class FormAutomationSet {
                 stateBeforeWaitScreenForm = getState();
                 waitScreenActive = true;
             }
-            wait.setMessage(CRLF + CRLF + CRLF + text);
+            wait.setMessage(text);
             setState(STATE_WAIT);
 
             getCurrentForm().paint(true);
