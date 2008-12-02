@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 27.03.2003
  *  
- * Revision:      $Revision: 1.3 $
+ * Revision:      $Revision: 1.4 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/10/09 10:23:00 $
+ * Last modified: $Date: 2008/12/02 13:17:01 $
  * 
  * $Log: Session.java,v $
+ * Revision 1.4  2008/12/02 13:17:01  ilgian
+ * Added constructor with Session argument
+ *
  * Revision 1.3  2008/10/09 10:23:00  ilgian
  * Added support for session attributes
  *
@@ -43,7 +46,7 @@ import net.sf.jalita.util.Configuration;
  * Represents a session to a terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 
 public class Session implements Runnable {
@@ -100,7 +103,9 @@ public class Session implements Runnable {
         lastActivity = System.currentTimeMillis();
     }
 
-
+    public Session(Session session){
+    	
+    }
 
     //--------------------------------------------------------------------------
     // private & protected methods
