@@ -10,11 +10,14 @@
  * Author:   	  Gianluca Sartori
  * Creation date: 12.03.2008
  *  
- * Revision:      $Revision: 1.3 $
+ * Revision:      $Revision: 1.4 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/02/02 14:26:46 $
+ * Last modified: $Date: 2009/02/02 14:54:56 $
  * 
  * $Log: MenuWidget.java,v $
+ * Revision 1.4  2009/02/02 14:54:56  ilgian
+ * Fixed some bugs in numeric keyboard shortcuts
+ *
  * Revision 1.3  2009/02/02 14:26:46  ilgian
  * Enhanced support for keybord shortcuts
  *
@@ -29,18 +32,16 @@
 package net.sf.jalita.ui.widgets;
 
 import java.io.IOException;
+import java.util.GregorianCalendar;
 import java.util.Calendar;
 import java.util.Vector;
+
 
 import javax.swing.AbstractListModel;
 import javax.swing.ListModel;
 
-import sun.util.calendar.BaseCalendar.Date;
-import sun.util.resources.CalendarData;
-
 import net.sf.jalita.io.TerminalEvent;
 import net.sf.jalita.io.TerminalIOInterface;
-import net.sf.jalita.server.Session;
 import net.sf.jalita.ui.forms.BasicForm;
 
 
@@ -49,7 +50,7 @@ import net.sf.jalita.ui.forms.BasicForm;
  * Abstract class for widgets that represent a list
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class MenuWidget extends ListWidget {
 
@@ -59,7 +60,7 @@ public class MenuWidget extends ListWidget {
 	private int topIndex = 0;
 	private boolean numbered = true;
 	private int lastIndex = 0;
-	private int lastTimeKeyPressed;
+	private long lastKeyPressed;
     private int lastNumberPressed;
 
 
@@ -103,14 +104,14 @@ public class MenuWidget extends ListWidget {
     	int current = getSelectedIndex() + 1;
     	if(numbered){
 	    	if(NUMBERS.indexOf(e.getKeyAsChar()) >= 0){
-	    		int currentSecond=Calendar.getInstance().get(Calendar.SECOND);//(float)1000;
+	    		long currentSecond = GregorianCalendar.getInstance().getTimeInMillis() / 1000;//(float)1000;
 	    		int idx = Integer.valueOf(e.getKeyAsString()).intValue();
 	    		if(getListModel().getSize() < 10){
 	    			if(idx > getListModel().getSize()) idx = getListModel().getSize(); 
 	    			setSelectedIndex(idx - 1);
 	    		} else {
-	    			int timePassed=currentSecond - lastTimeKeyPressed;
-	    			if((timePassed==1 || timePassed==0) && lastNumberPressed!=0){
+	    			long secondsElapsed = currentSecond - lastKeyPressed;
+	    			if((secondsElapsed==1 || secondsElapsed==0) && lastNumberPressed!=0){
 		    			if(current < 10){
 		    				idx = (current * 10) + idx;
 		    			}
@@ -118,7 +119,7 @@ public class MenuWidget extends ListWidget {
 	    			if(idx > getListModel().getSize()) idx = getListModel().getSize();
 	    			setSelectedIndex(idx - 1);
 	    		}
-	    		lastTimeKeyPressed=currentSecond;
+	    		lastKeyPressed = currentSecond;
 	    		lastNumberPressed=NUMBERS.indexOf(e.getKeyAsChar());
 	    	}
 	    	else if(e.getKey() == TerminalEvent.KEY_BACKSPACE){
@@ -128,9 +129,13 @@ public class MenuWidget extends ListWidget {
 	    		} else {
 	    			setSelectedIndex((current / 10) - 1);
 	    		}
+	    		lastNumberPressed = 0;
 	    	}
 	    	else if(e.getKey() == TerminalEvent.KEY_F04 || e.getKey() == TerminalEvent.KEY_DEL){
 	    		setSelectedIndex(0);
+	    		lastNumberPressed = 0;
+	    	} else {
+	    		lastNumberPressed = 0;
 	    	}
     	}
        	super.processKeyPressed(e);
