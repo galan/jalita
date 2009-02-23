@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.2 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/12/05 17:53:49 $
+ * Revision:      $Revision: 1.3 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2009/02/23 13:42:06 $
  * 
  * $Log: TerminalIOInterface.java,v $
+ * Revision 1.3  2009/02/23 13:42:06  ilgian
+ * Added getPort() method
+ *
  * Revision 1.2  2004/12/05 17:53:49  danielgalan
  * Refactored this damn beepError thing
  *
@@ -33,7 +36,7 @@ import java.net.InetAddress;
  * Basic functionality for I/O
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public interface TerminalIOInterface {
 
@@ -186,6 +189,9 @@ public interface TerminalIOInterface {
     /** Returns the internet-adress associated with the terminal */
     public InetAddress getInetAdress();
 
+
+    /** Returns the port associated with the terminal */
+    public int getPort();
 
 
     /** reads the next event from the reader */

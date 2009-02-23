@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.2 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:19 $
+ * Revision:      $Revision: 1.3 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2009/02/23 13:42:06 $
  * 
  * $Log: BasicTerminalIO.java,v $
+ * Revision 1.3  2009/02/23 13:42:06  ilgian
+ * Added getPort() method
+ *
  * Revision 1.2  2005/05/23 18:10:19  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -36,7 +39,7 @@ import net.sf.jalita.util.Configuration;
  * Describes the basic functionality, which must be supported by each terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class BasicTerminalIO implements TerminalIOInterface {
 
@@ -100,5 +103,12 @@ public abstract class BasicTerminalIO implements TerminalIOInterface {
     public InetAddress getInetAdress() {
         return socket.getInetAddress();
     }
+    
+    
+    
+    /** Returns the port associated with the socket */
+	public int getPort() {
+		return socket.getPort();
+	}
 
 }
