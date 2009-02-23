@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 27.04.2003
  *  
- * Revision:      $Revision: 1.2 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.3 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2009/02/23 13:42:57 $
  * 
  * $Log: SessionManager.java,v $
+ * Revision 1.3  2009/02/23 13:42:57  ilgian
+ * Session identified by source IP+port
+ *
  * Revision 1.2  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -27,13 +30,17 @@ package net.sf.jalita.server;
 
 
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.net.*;
 import java.util.Vector;
 import java.io.*;
+
 import net.sf.jalita.io.TerminalIOInterface;
 import net.sf.jalita.util.Configuration;
 
 import java.util.Enumeration;
+import java.util.Map.Entry;
+
 import org.apache.log4j.Logger;
 
 
@@ -42,7 +49,7 @@ import org.apache.log4j.Logger;
  * Administrates the connected terminals
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SessionManager implements Runnable {
 
@@ -196,7 +203,7 @@ public class SessionManager implements Runnable {
 
         while (enumSessions.hasMoreElements()) {
             Session nextSession = (Session)enumSessions.nextElement();
-            InetAddress nextKey = (InetAddress)enumKeys.nextElement();
+            String nextKey = (String)enumKeys.nextElement();
 
             if (nextSession.isTimeout()) {
                 log.debug("Session-Timeout for '" + nextSession + "'");
@@ -231,26 +238,48 @@ public class SessionManager implements Runnable {
     /** Adds a new Sesion. One IP is associated to one Session. */
     public void addSession(Socket socket) {
         Session newSession = null;
-        Session oldSession = (Session)sessions.get(socket.getInetAddress());
+        String sessionID = socket.getInetAddress().getHostAddress() + ":" + socket.getPort();
+        
+        if(config.getServerMaxSessionsPerHost() == 1){
+        	sessionID = socket.getInetAddress().getHostAddress();
+        }
+        Session oldSession = (Session)sessions.get(sessionID);
+        int sessionCount = 0;
 
         // New Session to not registered IP
-        if ((oldSession == null)) {
-            log.debug("IP '" + socket.getInetAddress().getHostAddress() + ":" + socket.getPort() + "' is not registered -> new Session");
-            newSession = new Session(socket);
-            sessions.put(socket.getInetAddress(), newSession);
+        if (oldSession == null) {
+        	for(Iterator<String> iter = sessions.keySet().iterator(); iter.hasNext(); ){
+        		String tmpKey = iter.next();
+        		if(tmpKey.startsWith(socket.getInetAddress().getHostAddress()+ ":")){
+        			sessionCount++;
+        		}
+        	}
+        	if(sessionCount >= config.getServerMaxSessionsPerHost()){
+        		log.debug("IP '" + sessionID + "' exceeds maximum connections --> drop");
+        		try {
+					socket.close();
+				} catch (IOException e) {
+					//ignore
+				}
+				return;
+        	} else {
+	            log.debug("IP '" + sessionID + "' is not registered -> new Session");
+	            newSession = new Session(socket);
+	            sessions.put(sessionID, newSession);
+        	}
         }
 
         // IP exists, but is closed -> close and create new Session
         else if (oldSession.isFinished()) {
-            log.debug("IP '" + socket.getInetAddress().getHostAddress() + ":" + socket.getPort() + "' exists, but is closed -> closing and new Session");
+            log.debug("IP '" + sessionID + "' exists, but is closed -> closing and new Session");
             registerClosedSession(oldSession);
             newSession = new Session(socket);
-            sessions.put(socket.getInetAddress(), newSession);
+            sessions.put(sessionID, newSession);
         }
 
         // IP exists, will be reused
         else {
-            log.debug("IP '" + socket.getInetAddress().getHostAddress() + ":" + socket.getPort() + "' exists -> reusing");
+            log.debug("IP '" + sessionID + "' exists -> reusing");
             oldSession.bindSocket(socket);
             newSession = oldSession;
         }
@@ -287,7 +316,7 @@ public class SessionManager implements Runnable {
 
     /** Placed a closed Session in the closed Session List, and removes it from the running Session List */
     public void registerClosedSession(Session session) {
-        sessions.remove(session.getIO().getInetAdress());
+        sessions.remove(session.getIO().getInetAdress() + ":" + session.getIO().getPort());
         if (!closedSessions.contains(session)) {
             closedSessions.addElement(session);
         }
