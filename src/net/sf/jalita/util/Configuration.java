@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 25.04.2003
  *  
- * Revision:      $Revision: 1.2 $
+ * Revision:      $Revision: 1.3 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/10/09 15:25:15 $
+ * Last modified: $Date: 2009/02/23 13:44:13 $
  * 
  * $Log: Configuration.java,v $
+ * Revision 1.3  2009/02/23 13:44:13  ilgian
+ * Added configuration setting to allow a maximum number of connections from the same IP address
+ *
  * Revision 1.2  2008/10/09 15:25:15  ilgian
  * Added configuration entries for session width and height
  *
@@ -37,7 +40,7 @@ import org.apache.log4j.Logger;
  * Configuration, read from the propertyfile, and global Constants
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class Configuration {
 
@@ -61,6 +64,8 @@ public class Configuration {
     private final static String PROP_SESSION_INIT_TIMEBEFORECLEARBUFFER = "session.init.timebeforeclearbuffer";
     private final static String PROP_SESSION_WIDTH = "session.init.width";
     private final static String PROP_SESSION_HEIGHT = "session.init.height";
+    
+    private final static String PROP_SERVER_MAXSESSIONS_PER_HOST = "server.maxsessions.perhost";
     
     // common
     public final static String KEY_CRLF = "\r\n";
@@ -218,6 +223,19 @@ public class Configuration {
         properties.setProperty(PROP_SERVER_PORT, String.valueOf(port));
     }
 
+    
+    /** maximum number of sessions per single host */
+    public int getServerMaxSessionsPerHost() {
+        String maxSessions = properties.getProperty(PROP_SERVER_MAXSESSIONS_PER_HOST);
+        return Integer.parseInt(maxSessions);
+    }
+
+
+
+    /** maximum number of sessions per single host */
+    public void setServerMaxSessionsPerHost(int maxSessions) {
+        properties.setProperty(PROP_SERVER_MAXSESSIONS_PER_HOST, String.valueOf(maxSessions));
+    }
     
     
     public int getSessionHeight() {
