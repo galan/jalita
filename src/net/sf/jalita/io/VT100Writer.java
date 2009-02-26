@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 30.04.2003
  *  
- * Revision:      $Revision: 1.3 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.4 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2009/02/26 16:50:59 $
  * 
  * $Log: VT100Writer.java,v $
+ * Revision 1.4  2009/02/26 16:50:59  ilgian
+ * Added beep with beepCount parameter
+ *
  * Revision 1.3  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -38,7 +41,7 @@ import net.sf.jalita.util.Configuration;
  * VT100-compatible stream writer, almost.
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class VT100Writer extends Writer implements VT100Constants {
 
@@ -414,22 +417,16 @@ public class VT100Writer extends Writer implements VT100Constants {
     }
 
 
-
     /** Makes an errortone */
     public void beepError() throws IOException {
-        Thread worker = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    Thread.sleep(500);
-                    writeText(BEEP_ERROR);
-                    flush();
-                }
-                catch (Exception ex) {
-                    log.error(ex);
-                }
-            }
-        });
-        worker.start();
+    	beepError(1);
+    }
+
+    /** Makes an errortone */
+    public void beepError(int number) throws IOException {
+    	for(int i=0;i<number;i++)
+    		writeText(BEEP_ERROR);
+        flush();
     }
 
 

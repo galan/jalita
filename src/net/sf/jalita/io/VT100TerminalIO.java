@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.3 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.4 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2009/02/26 16:50:28 $
  * 
  * $Log: VT100TerminalIO.java,v $
+ * Revision 1.4  2009/02/26 16:50:28  ilgian
+ * Added beep with beepCount parameter
+ *
  * Revision 1.3  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -36,7 +39,7 @@ import java.io.*;
  * a VT100-compatible terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 
 public class VT100TerminalIO extends BasicTerminalIO {
@@ -61,9 +64,11 @@ public class VT100TerminalIO extends BasicTerminalIO {
     public VT100TerminalIO(Socket socket) throws IOException {
         super();
         log.debug("Creating instance of VT100Terminal");
-
-        out = new VT100Writer(new BufferedOutputStream(socket.getOutputStream()));
-        in = new VT100Reader(socket.getInputStream());
+        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+        BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+        TelnetIACHandler IACHandler = new TelnetIACHandler(bis,bos);
+        out = new VT100Writer(bos);
+        in = new VT100Reader(IACHandler.getInputStream());
 
         this.socket = socket;
     }
@@ -231,4 +236,9 @@ public class VT100TerminalIO extends BasicTerminalIO {
         out.beepError();
     }
 
+    /** Makes an errortone */
+    public void beepError(int number) throws IOException {
+        out.beepError(number);
+    }
+    
 }

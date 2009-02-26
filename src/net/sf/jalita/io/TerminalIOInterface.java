@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.3 $
+ * Revision:      $Revision: 1.4 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/02/23 13:42:06 $
+ * Last modified: $Date: 2009/02/26 16:48:04 $
  * 
  * $Log: TerminalIOInterface.java,v $
+ * Revision 1.4  2009/02/26 16:48:04  ilgian
+ * Added beep with beepCount parameter
+ *
  * Revision 1.3  2009/02/23 13:42:06  ilgian
  * Added getPort() method
  *
@@ -36,7 +39,7 @@ import java.net.InetAddress;
  * Basic functionality for I/O
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public interface TerminalIOInterface {
 
@@ -202,7 +205,9 @@ public interface TerminalIOInterface {
     /** Makes an errortone */
     public void beepError() throws IOException;
 
-
+    
+    /** Makes an errortone */
+    public void beepError(int number) throws IOException;
 
     /** @todo public void enableLED(int led) throws IOException; */
     /** @todo public void disableLEDs() throws IOException; */
