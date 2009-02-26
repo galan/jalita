@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 25.04.2003
  *  
- * Revision:      $Revision: 1.2 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.3 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2009/02/26 16:52:51 $
  * 
  * $Log: SocketDispatcherThread.java,v $
+ * Revision 1.3  2009/02/26 16:52:51  ilgian
+ * Set thread name to socket address
+ *
  * Revision 1.2  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -35,7 +38,7 @@ import net.sf.jalita.util.Configuration;
  * Resolves incoming connections
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 
 public class SocketDispatcherThread extends Thread {
@@ -99,6 +102,7 @@ public class SocketDispatcherThread extends Thread {
 
         // TODO Filter at this point IP-adresses?
         manager.addSession(socket);
+        setName(socket.getInetAddress().getHostAddress() + ":" + socket.getPort());
 
         log.debug("Dispatcher for " + socket.getInetAddress().getHostAddress() + ":" + socket.getPort() + " has finished");
     }
