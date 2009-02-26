@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 03.05.2003
  *  
- * Revision:      $Revision: 1.4 $
+ * Revision:      $Revision: 1.5 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/12/02 13:13:32 $
+ * Last modified: $Date: 2009/02/26 16:54:31 $
  * 
  * $Log: BasicForm.java,v $
+ * Revision 1.5  2009/02/26 16:54:31  ilgian
+ * Changed log level to debug for keypress
+ *
  * Revision 1.4  2008/12/02 13:13:32  ilgian
  * Added getHeader method
  *
@@ -52,7 +55,7 @@ import org.apache.log4j.Logger;
  * Skeletal structure for Form's
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 
 public abstract class BasicForm implements TerminalEventListener {
@@ -322,6 +325,7 @@ public abstract class BasicForm implements TerminalEventListener {
         }
 
         getIO().flush();
+        
     }
 
     /** Adds and registers a widget to the form */
@@ -396,13 +400,13 @@ public abstract class BasicForm implements TerminalEventListener {
     /** Catches a recived keypress */
     public final void keyPressed(TerminalEvent e) {
         if (e.isPrintable()) {
-            log.info("Keypress received in BasicForm -> Key (printable): [" + e.getKeyAsString() + "]");
+            log.debug("Keypress received in BasicForm -> Key (printable): [" + e.getKeyAsString() + "]");
         }
         else if (e.isFunctionKey()) {
-            log.info("Keypress received in BasicForm -> FunktionKey: [" + java.lang.Math.abs(e.getKey()) + "]");
+            log.debug("Keypress received in BasicForm -> FunktionKey: [" + java.lang.Math.abs(e.getKey()) + "]");
         }
         else {
-            log.info("Keypress received in BasicForm -> Key (non-printable): [" + e.getKey() + "]");
+            log.debug("Keypress received in BasicForm -> Key (non-printable): [" + e.getKey() + "]");
         }
 
         if (e.getKey() == TerminalEvent.KEY_TAB) {
