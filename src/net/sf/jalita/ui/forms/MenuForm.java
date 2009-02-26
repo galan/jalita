@@ -10,11 +10,14 @@
  * Author:   	  Gianluca Sartori
  * Creation date: 21.03.2008
  *  
- * Revision:      $Revision: 1.2 $
+ * Revision:      $Revision: 1.3 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/10/09 13:19:45 $
+ * Last modified: $Date: 2009/02/26 16:55:36 $
  * 
  * $Log: MenuForm.java,v $
+ * Revision 1.3  2009/02/26 16:55:36  ilgian
+ * Added code to handle exception in Menu Form
+ *
  * Revision 1.2  2008/10/09 13:19:45  ilgian
  * Added configuration parameters for width and height
  *
@@ -25,6 +28,7 @@
  **********************************************************************/
 package net.sf.jalita.ui.forms;
 
+import java.io.IOException;
 import java.util.Vector;
 
 import net.sf.jalita.ui.widgets.MenuWidget;
@@ -37,7 +41,7 @@ import net.sf.jalita.util.Configuration;
  * Basic Menu Form
  *
  * @author  Gianluca Sartori
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class MenuForm extends BasicForm {
 
@@ -63,7 +67,16 @@ public abstract class MenuForm extends BasicForm {
 
     public void processKeyPressed(TerminalEvent e) {
     	if(e.getKey() == TerminalEvent.KEY_ENTER){
-    		owner.doAction(menu.getSelectedIndex()+1);
+    		try {
+    			owner.doAction(menu.getSelectedIndex()+1);
+    		} catch(Throwable ex){
+    			log.error(ex);
+    			try {
+					getIO().beepError(2);
+				} catch (IOException e1) {
+					//ignore
+				}
+    		}
     	}
     	if(e.getKey() == TerminalEvent.KEY_F02){
     		owner.doAction(FormAutomationSet.STATE_FINISHED);
