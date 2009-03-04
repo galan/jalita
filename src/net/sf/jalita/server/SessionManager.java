@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 27.04.2003
  *  
- * Revision:      $Revision: 1.3 $
+ * Revision:      $Revision: 1.4 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/02/23 13:42:57 $
+ * Last modified: $Date: 2009/03/04 14:21:40 $
  * 
  * $Log: SessionManager.java,v $
+ * Revision 1.4  2009/03/04 14:21:40  ilgian
+ * Added sessions Enumeration method
+ *
  * Revision 1.3  2009/02/23 13:42:57  ilgian
  * Session identified by source IP+port
  *
@@ -49,7 +52,7 @@ import org.apache.log4j.Logger;
  * Administrates the connected terminals
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SessionManager implements Runnable {
 
@@ -289,6 +292,9 @@ public class SessionManager implements Runnable {
     }
 
 
+    public Enumeration sessions() {
+		return sessions.elements();
+	}
 
     /**
      * Closes the broken Session immediately. In difference to registerBrokenSession
