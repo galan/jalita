@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 30.04.2003
  *  
- * Revision:      $Revision: 1.2 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.3 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2009/03/04 11:35:12 $
  * 
  * $Log: VT100Reader.java,v $
+ * Revision 1.3  2009/03/04 11:35:12  ilgian
+ * Added IAC support through IACHanlder class
+ *
  * Revision 1.2  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -25,6 +28,7 @@
 package net.sf.jalita.io;
 
 import java.io.*;
+
 import org.apache.log4j.Logger;
 
 import net.sf.jalita.util.Configuration;
@@ -35,7 +39,7 @@ import net.sf.jalita.util.Configuration;
  * VT100-compatible stream reader, almost.
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class VT100Reader extends Reader implements VT100Constants {
 
@@ -74,7 +78,7 @@ public class VT100Reader extends Reader implements VT100Constants {
     private boolean closed = false;
 
     /** reads CRLF and CR, and if only CR and not CRLF was read  the following character will be pushed back */
-    private Reader in;
+    private InputStreamReader in;
 
     /** the current state of the finite automaton, read from readNextKey() */
     private int state;
@@ -85,11 +89,11 @@ public class VT100Reader extends Reader implements VT100Constants {
     /** state of CR keys */
     private boolean carriageReturnRecived = false;
 
-    /** barcode recived and terminated by CR, to intercept following LF */
+    /** barcode received and terminated by CR, to intercept following LF */
     private boolean barcodeTerminated = false;
 
-
-
+    /** IAC control command handler */
+    private IACHandler m_IACHandler;
     //--------------------------------------------------------------------------
     // constructors
     //--------------------------------------------------------------------------
@@ -97,7 +101,7 @@ public class VT100Reader extends Reader implements VT100Constants {
     /** Creates a new VT100Reader */
     public VT100Reader(InputStream in) {
         log.debug("Creating instance of VT100Reader");
-        this.in =  new InputStreamReader(in);
+        this.in = new InputStreamReader(in);
 
         // clear initial buffer
         try {
@@ -109,6 +113,14 @@ public class VT100Reader extends Reader implements VT100Constants {
     }
 
 
+    public void setIACHandler(IACHandler handler){
+    	m_IACHandler = handler;
+    }
+    
+    public IACHandler getIACHandler(){
+    	return m_IACHandler;
+    }
+    
 
     //--------------------------------------------------------------------------
     // private & protected methods
@@ -134,7 +146,7 @@ public class VT100Reader extends Reader implements VT100Constants {
         state = STATE_INIT;  // reset state to initial state
 
         while (state != STATE_FINISHED) {
-        	int key = read();  // this method blocks the thread ('cause its waits for userinput)
+        	int key = m_IACHandler.read();  // this method blocks the thread ('cause its waits for userinput)
 
             // assign new event
             if (state == STATE_INIT) {
@@ -227,7 +239,7 @@ public class VT100Reader extends Reader implements VT100Constants {
 
                 // unknown escape sequence
                 else {
-                    log.warn("esc unknown");
+                    log.warn("esc unknown: [" + key + "]");
                     te = new TerminalEvent(this, TerminalEvent.KEY_UNDEFINED);
                     state = STATE_FINISHED;
                 }
@@ -357,7 +369,7 @@ public class VT100Reader extends Reader implements VT100Constants {
     public int read(char[] cbuf, int off, int len) throws IOException {
         synchronized (lock) {
         	checkReaderState();
-            return in.read(cbuf, off, len);
+        		return in.read(cbuf, off, len);
         }
     }
 
