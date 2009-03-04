@@ -10,11 +10,15 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.4 $
+ * Revision:      $Revision: 1.5 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/02/26 16:50:28 $
+ * Last modified: $Date: 2009/03/04 11:36:17 $
  * 
  * $Log: VT100TerminalIO.java,v $
+ * Revision 1.5  2009/03/04 11:36:17  ilgian
+ * Enhanced support for beeps
+ * Added width/height members
+ *
  * Revision 1.4  2009/02/26 16:50:28  ilgian
  * Added beep with beepCount parameter
  *
@@ -35,11 +39,12 @@ import java.io.*;
 
 
 
+
 /**
  * a VT100-compatible terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 
 public class VT100TerminalIO extends BasicTerminalIO {
@@ -54,8 +59,14 @@ public class VT100TerminalIO extends BasicTerminalIO {
     /** LowLevel In-Access */
     private final VT100Reader in;
 
+    private Beeper beeper;
 
-
+    private IACHandler IACHandler;
+    
+    private int terminalWidth;
+    
+    private int terminalHeight;
+    
     //--------------------------------------------------------------------------
     // constructors
     //--------------------------------------------------------------------------
@@ -66,9 +77,12 @@ public class VT100TerminalIO extends BasicTerminalIO {
         log.debug("Creating instance of VT100Terminal");
         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
-        TelnetIACHandler IACHandler = new TelnetIACHandler(bis,bos);
+        IACHandler = new IACHandler(bis,bos);
         out = new VT100Writer(bos);
-        in = new VT100Reader(IACHandler.getInputStream());
+        in = new VT100Reader(bis);
+        in.setIACHandler(new IACHandler(bis,bos));
+        beeper = new Beeper(socket.getOutputStream());
+        beeper.start();
 
         this.socket = socket;
     }
@@ -233,12 +247,69 @@ public class VT100TerminalIO extends BasicTerminalIO {
 
     /** Makes an errortone */
     public void beepError() throws IOException {
-        out.beepError();
+        beeper.beep();
     }
 
     /** Makes an errortone */
     public void beepError(int number) throws IOException {
-        out.beepError(number);
+    	for(int i=0; i<number; i++)
+            beeper.beep();
     }
+    
+    /**
+     *
+     * Thread to write the beep chars directly to the output stream
+     * with a sufficient delay within beeps. The beeps are written
+     * on the socket stream without buffering.
+     */ 
+    private class Beeper extends Thread {
+
+    	private int beepCount = 0;
+    	private OutputStreamWriter osw;
+    	
+    	public Beeper(OutputStream outStream){
+    		osw = new OutputStreamWriter(outStream);
+    	}
+    	
+    	public synchronized void beep(){
+    		beepCount = getBeepCount() + 1;
+    	}
+    	
+    	private synchronized int getBeepCount(){
+    		return beepCount;
+    	}
+    	
+    	private synchronized void sendBeep(){
+    		beepCount = getBeepCount() - 1;
+    		try {
+    			IACHandler.setEcho(true);
+    			osw.write(VT100Constants.BEEP_ERROR);
+    			osw.flush();
+    			//IACHandler.read(); //This should be the beep...
+    			IACHandler.setEcho(false);
+    			try {
+					Thread.sleep(300);
+				} catch (InterruptedException e) {
+					//ignore
+				}
+    		} catch (IOException e) {
+				log.error(e);
+			}
+    	}
+    	
+    	public void run() {
+			for(;;){
+				if(getBeepCount() > 0)
+					sendBeep();
+				try {
+					sleep(200);
+				} catch (InterruptedException e) {
+					//ignore
+				}
+			}
+		}
+		
+    }
+
     
 }
