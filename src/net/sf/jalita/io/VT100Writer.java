@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 30.04.2003
  *  
- * Revision:      $Revision: 1.4 $
+ * Revision:      $Revision: 1.5 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/02/26 16:50:59 $
+ * Last modified: $Date: 2009/03/04 11:36:59 $
  * 
  * $Log: VT100Writer.java,v $
+ * Revision 1.5  2009/03/04 11:36:59  ilgian
+ * Removed unused methods
+ *
  * Revision 1.4  2009/02/26 16:50:59  ilgian
  * Added beep with beepCount parameter
  *
@@ -31,6 +34,7 @@
 package net.sf.jalita.io;
 
 import java.io.*;
+
 import org.apache.log4j.Logger;
 
 import net.sf.jalita.util.Configuration;
@@ -41,7 +45,7 @@ import net.sf.jalita.util.Configuration;
  * VT100-compatible stream writer, almost.
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class VT100Writer extends Writer implements VT100Constants {
 
@@ -51,7 +55,6 @@ public class VT100Writer extends Writer implements VT100Constants {
 
     /** log4j reference */
     public final static Logger log = Logger.getLogger(Configuration.class);
-
 
 
     //--------------------------------------------------------------------------
@@ -417,20 +420,6 @@ public class VT100Writer extends Writer implements VT100Constants {
     }
 
 
-    /** Makes an errortone */
-    public void beepError() throws IOException {
-    	beepError(1);
-    }
-
-    /** Makes an errortone */
-    public void beepError(int number) throws IOException {
-    	for(int i=0;i<number;i++)
-    		writeText(BEEP_ERROR);
-        flush();
-    }
-
-
-
     /** closes the IO */
     public void close() throws IOException {
         try {
@@ -478,4 +467,5 @@ public class VT100Writer extends Writer implements VT100Constants {
         }
     }
 
+   
 }
