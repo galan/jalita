@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 27.03.2003
  *  
- * Revision:      $Revision: 1.4 $
+ * Revision:      $Revision: 1.5 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2008/12/02 13:17:01 $
+ * Last modified: $Date: 2009/03/04 11:37:30 $
  * 
  * $Log: Session.java,v $
+ * Revision 1.5  2009/03/04 11:37:30  ilgian
+ * Added thread name
+ *
  * Revision 1.4  2008/12/02 13:17:01  ilgian
  * Added constructor with Session argument
  *
@@ -46,7 +49,7 @@ import net.sf.jalita.util.Configuration;
  * Represents a session to a terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 
 public class Session implements Runnable {
@@ -173,7 +176,7 @@ public class Session implements Runnable {
     public void startSession() {
         lastActivity = System.currentTimeMillis();
 
-        Thread sessionThread = new Thread(this);
+        Thread sessionThread = new Thread(this,io.toString());
         sessionThread.start();
     }
 
@@ -318,8 +321,8 @@ public class Session implements Runnable {
         log.info("Session-Thread closed on Node " + lokalIO);
     }
 
-    
-    public void setAttribute(String name, Object value){
+
+	public void setAttribute(String name, Object value){
     	attributes.put(name.toLowerCase().trim(), value);
     }
     
