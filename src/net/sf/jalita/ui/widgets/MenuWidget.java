@@ -10,11 +10,14 @@
  * Author:   	  Gianluca Sartori
  * Creation date: 12.03.2008
  *  
- * Revision:      $Revision: 1.4 $
+ * Revision:      $Revision: 1.5 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/02/02 14:54:56 $
+ * Last modified: $Date: 2009/03/05 11:43:16 $
  * 
  * $Log: MenuWidget.java,v $
+ * Revision 1.5  2009/03/05 11:43:16  ilgian
+ * Bug fix for selected item exceeding 2 digits
+ *
  * Revision 1.4  2009/02/02 14:54:56  ilgian
  * Fixed some bugs in numeric keyboard shortcuts
  *
@@ -50,7 +53,7 @@ import net.sf.jalita.ui.forms.BasicForm;
  * Abstract class for widgets that represent a list
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class MenuWidget extends ListWidget {
 
@@ -213,7 +216,8 @@ public class MenuWidget extends ListWidget {
 			}
 			getIO().writeText("F4:Canc F2:Esc",getPositionLine() + getHeight() - 1, 0);
 			getIO().writeText(">",getPositionLine() + getHeight() - 1, getPositionColumn() + getWidth() - 4);
-			getIO().writeText(new Integer(getSelectedIndex() + 1).toString(),getPositionLine() + getHeight() - 1, getPositionColumn() + getWidth() - 2);
+			int selectedIdx = getSelectedIndex() + 1;
+			getIO().writeText(new Integer(selectedIdx).toString(),getPositionLine() + getHeight() - 1, getPositionColumn() + getWidth() - (selectedIdx < 100 ? 2:3));
 		}
 		
 		
