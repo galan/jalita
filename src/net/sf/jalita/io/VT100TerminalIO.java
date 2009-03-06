@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.5 $
+ * Revision:      $Revision: 1.6 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/03/04 11:36:17 $
+ * Last modified: $Date: 2009/03/06 11:17:52 $
  * 
  * $Log: VT100TerminalIO.java,v $
+ * Revision 1.6  2009/03/06 11:17:52  ilgian
+ * disabled echo during beeps
+ *
  * Revision 1.5  2009/03/04 11:36:17  ilgian
  * Enhanced support for beeps
  * Added width/height members
@@ -44,7 +47,7 @@ import java.io.*;
  * a VT100-compatible terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 
 public class VT100TerminalIO extends BasicTerminalIO {
@@ -282,11 +285,11 @@ public class VT100TerminalIO extends BasicTerminalIO {
     	private synchronized void sendBeep(){
     		beepCount = getBeepCount() - 1;
     		try {
-    			IACHandler.setEcho(true);
+    			//IACHandler.setEcho(true);
     			osw.write(VT100Constants.BEEP_ERROR);
     			osw.flush();
     			//IACHandler.read(); //This should be the beep...
-    			IACHandler.setEcho(false);
+    			//IACHandler.setEcho(false);
     			try {
 					Thread.sleep(300);
 				} catch (InterruptedException e) {
