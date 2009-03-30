@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 27.04.2003
  *  
- * Revision:      $Revision: 1.4 $
+ * Revision:      $Revision: 1.5 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/03/04 14:21:40 $
+ * Last modified: $Date: 2009/03/30 09:51:27 $
  * 
  * $Log: SessionManager.java,v $
+ * Revision 1.5  2009/03/30 09:51:27  ilgian
+ * Added Thread name (useful for remote debugging purposes)
+ *
  * Revision 1.4  2009/03/04 14:21:40  ilgian
  * Added sessions Enumeration method
  *
@@ -52,7 +55,7 @@ import org.apache.log4j.Logger;
  * Administrates the connected terminals
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SessionManager implements Runnable {
 
@@ -128,7 +131,7 @@ public class SessionManager implements Runnable {
         log.debug("Creating instance of SessionManager");
 
         // Starts the cleanup thread in background, which manages broken and closed connections, ass well as time outs
-        Thread cleanupThread = new Thread(this);
+        Thread cleanupThread = new Thread(this, "SessionManager");
         cleanupThread.start();
     }
 

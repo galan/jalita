@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 25.04.2003
  *  
- * Revision:      $Revision: 1.3 $
+ * Revision:      $Revision: 1.4 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/02/26 16:52:51 $
+ * Last modified: $Date: 2009/03/30 09:51:53 $
  * 
  * $Log: SocketDispatcherThread.java,v $
+ * Revision 1.4  2009/03/30 09:51:53  ilgian
+ * Added Thread name (useful for remote debugging purposes)
+ *
  * Revision 1.3  2009/02/26 16:52:51  ilgian
  * Set thread name to socket address
  *
@@ -38,7 +41,7 @@ import net.sf.jalita.util.Configuration;
  * Resolves incoming connections
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 
 public class SocketDispatcherThread extends Thread {
@@ -79,7 +82,7 @@ public class SocketDispatcherThread extends Thread {
 
     /** Creates a SocketDispatcherThread object */
     public SocketDispatcherThread(Socket acceptedSocket) {
-        super();
+        super(acceptedSocket.getInetAddress().getHostAddress() + ":" + acceptedSocket.getPort() + ".SocketDispatcher");
         log.debug("Creating instance of SocketDispatcherThread");
         socket = acceptedSocket;
     }

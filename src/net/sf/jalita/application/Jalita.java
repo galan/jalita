@@ -10,11 +10,14 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 01.07.2003
  *  
- * Revision:      $Revision: 1.3 $
- * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2005/05/23 18:10:20 $
+ * Revision:      $Revision: 1.4 $
+ * Checked in by: $Author: ilgian $
+ * Last modified: $Date: 2009/03/30 09:49:07 $
  * 
  * $Log: Jalita.java,v $
+ * Revision 1.4  2009/03/30 09:49:07  ilgian
+ * Added Thread name (useful for remote debugging purposes)
+ *
  * Revision 1.3  2005/05/23 18:10:20  danielgalan
  * some cleaning and removing some cycles (not all removed yet)
  *
@@ -43,7 +46,7 @@ import net.sf.jalita.util.ConfigurationException;
  * Jalita main class - this is where all starts
  *
  * @author Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Jalita {
 
@@ -119,7 +122,7 @@ public class Jalita {
                 cl.startListening();
                 log.debug("Socket Listener stopped successfully.");
             }
-        });
+        },"ListenerThread");
         listenerThread.start();
     }
 
