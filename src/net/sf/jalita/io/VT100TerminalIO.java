@@ -10,11 +10,15 @@
  * Author:   	  Daniel "tentacle" Galán y Martins
  * Creation date: 02.05.2003
  *  
- * Revision:      $Revision: 1.6 $
+ * Revision:      $Revision: 1.7 $
  * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/03/06 11:17:52 $
+ * Last modified: $Date: 2009/03/30 09:50:45 $
  * 
  * $Log: VT100TerminalIO.java,v $
+ * Revision 1.7  2009/03/30 09:50:45  ilgian
+ * Fixed Beeper Thread bug (not closing with IO)
+ * Added Thread name (useful for remote debugging purposes)
+ *
  * Revision 1.6  2009/03/06 11:17:52  ilgian
  * disabled echo during beeps
  *
@@ -47,7 +51,7 @@ import java.io.*;
  * a VT100-compatible terminal
  *
  * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 
 public class VT100TerminalIO extends BasicTerminalIO {
@@ -259,7 +263,20 @@ public class VT100TerminalIO extends BasicTerminalIO {
             beeper.beep();
     }
     
-    /**
+    
+    
+    
+    
+	public void close() throws IOException {
+		beeper.disable();
+		super.close();
+	}
+
+
+
+
+
+	/**
      *
      * Thread to write the beep chars directly to the output stream
      * with a sufficient delay within beeps. The beeps are written
@@ -269,6 +286,8 @@ public class VT100TerminalIO extends BasicTerminalIO {
 
     	private int beepCount = 0;
     	private OutputStreamWriter osw;
+    	private boolean enabled = true;
+    	private boolean isNameSet = false;
     	
     	public Beeper(OutputStream outStream){
     		osw = new OutputStreamWriter(outStream);
@@ -285,11 +304,8 @@ public class VT100TerminalIO extends BasicTerminalIO {
     	private synchronized void sendBeep(){
     		beepCount = getBeepCount() - 1;
     		try {
-    			//IACHandler.setEcho(true);
     			osw.write(VT100Constants.BEEP_ERROR);
     			osw.flush();
-    			//IACHandler.read(); //This should be the beep...
-    			//IACHandler.setEcho(false);
     			try {
 					Thread.sleep(300);
 				} catch (InterruptedException e) {
@@ -300,8 +316,20 @@ public class VT100TerminalIO extends BasicTerminalIO {
 			}
     	}
     	
+    	public void disable(){
+    		enabled = false;
+    	}
+    	
     	public void run() {
-			for(;;){
+			while(enabled){
+	    		if(!isNameSet){
+	    			try{
+	    				setName(socket.getInetAddress().getHostAddress() + ":" + socket.getPort() + ".Beeper");
+	    				isNameSet = true;
+	    			} catch(Throwable e){
+	    				isNameSet = false;
+	    			}
+	    		}
 				if(getBeepCount() > 0)
 					sendBeep();
 				try {
