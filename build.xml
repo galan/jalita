@@ -50,7 +50,7 @@
 		<javac srcdir="${dir.src}"
 		       destdir="${dir.classes}"
 		       classpathref="jalita.classpath"
-		       source="1.4"
+		       source="1.6"
 		       debug="on"
 		       fork="yes"
 			   encoding="ISO-8859-1"
@@ -103,7 +103,7 @@
 			destdir="${dir.docs}"
 			packagenames="net.sf.jalita.*"
 			classpathref="jalita.classpath"
-			source="1.4"
+			source="1.6"
 			Private="off"
 			Protected="on"
 			Version="on"
@@ -115,7 +115,7 @@
 			Windowtitle="Jalita API Documentation"
 			Doctitle="Jalita, Version ${version}"
 			header="Jalita"
-			footer="(c)2004 Daniel Galán y Martins, Hamburg">
+			footer="(c)2004-2009 Daniel Galán y Martins, Hamburg">
 			<link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
 		</javadoc>
 	</target>
@@ -130,7 +130,6 @@
 				<pathelement location="${dir.classes}"/>
 			</classpath>
 			<formatter type="xml"/>
-			<!-- <test name="net.sf.jalita.test.UnitTest"/> -->
 		</junittask>
 	</target>
 
