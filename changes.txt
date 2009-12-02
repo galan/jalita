@@ -8,3 +8,16 @@
 - Refactored this damn beepError-method
 - extended the examples a bit
 - added changes.txt
+
+1.1
+==========
+- Session identified by source IP+port
+- Added configuration setting to allow a maximum number of connections from the same IP address
+- Enhanced support for keybord shortcuts
+- Added support for session attributes
+- Added facilities to handle forms title
+- Added support for numbered menu lists
+- Added parameter for screen width and height
+- Added getPort() method
+- Added getHeader() method
+- Various fixes
