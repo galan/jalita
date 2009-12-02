@@ -1,180 +1,172 @@
 /***********************************************************************
- * 
  * This software is published under the terms of the LGPL
  * version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
  * Copyright (C) 2004 Daniel Galán y Martins
- * 
- *********************************************************************** 
- *
- * Author:   	  Daniel "tentacle" Galán y Martins
+ * Author: Daniel Galán y Martins
  * Creation date: 06.05.2003
- *  
- * Revision:      $Revision: 1.1 $
+ * Revision: $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
- * Last modified: $Date: 2004/07/26 21:40:27 $
- * 
+ * Last modified: $Date: 2009/12/02 21:53:58 $
  * $Log: ButtonWidget.java,v $
- * Revision 1.1  2004/07/26 21:40:27  danielgalan
- * Jalita initial cvs commit :)
+ * Revision 1.2  2009/12/02 21:53:58  danielgalan
+ * naming
  *
+ * Revision 1.1 2004/07/26 21:40:27 danielgalan
+ * Jalita initial cvs commit :)
  **********************************************************************/
 package net.sf.jalita.ui.widgets;
 
 import java.io.IOException;
-import net.sf.jalita.ui.forms.BasicForm;
+import java.util.Vector;
+
 import net.sf.jalita.io.TerminalEvent;
 import net.sf.jalita.io.TerminalIOInterface;
-import java.util.Vector;
+import net.sf.jalita.ui.forms.BasicForm;
 
 
 
 /**
- * A Button which could recive the focus and its label is sourrounded by "[" and "]"
- *
- * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.1 $
+ * A Button which could recive the focus and its label is sourrounded by "[" and
+ * "]"
+ * 
+ * @author Daniel Galán y Martins
+ * @version $Revision: 1.2 $
  */
 public class ButtonWidget extends BasicWidget {
 
-    //--------------------------------------------------------------------------
-    // instance variables
-    //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	// instance variables
+	//--------------------------------------------------------------------------
 
-    /** Text on the Button */
-    private String textLabel;
+	/** Text on the Button */
+	private String textLabel;
 
-    /** Registered Listeners */
-    private Vector listener = new Vector(1, 1);
-
-
-
-    //--------------------------------------------------------------------------
-    // constructors
-    //--------------------------------------------------------------------------
-
-    /** Creates a new ButtonWidget-Object */
-    public ButtonWidget(BasicForm owner, String text, int posLine, int posColumn, int width) {
-        super(owner, true);
-
-        setWidth(width);
-        setPositionLine(posLine);
-        setPositionColumn(posColumn);
-
-        setText(text);
-    }
+	/** Registered Listeners */
+	private final Vector listener = new Vector(1, 1);
 
 
+	//--------------------------------------------------------------------------
+	// constructors
+	//--------------------------------------------------------------------------
 
-    //--------------------------------------------------------------------------
-    // public methods
-    //--------------------------------------------------------------------------
+	/** Creates a new ButtonWidget-Object */
+	public ButtonWidget(BasicForm owner, String text, int posLine, int posColumn, int width) {
+		super(owner, true);
 
-    /** Draws the button */
-    public void paint() throws IOException {
-        if (isFocused()) {
-            getIO().drawLine(getPositionLine(), getPositionColumn()+1, TerminalIOInterface.ORIENTATION_HORIZONTAL, getWidth()-2);
-            getIO().writeInverseText("[", getPositionLine(), getPositionColumn());
-            getIO().writeInverseText("]", getPositionLine(), getPositionColumn() + getWidth() - 1);
-        }
-        else {
-            getIO().drawLine(getPositionLine(), getPositionColumn(), TerminalIOInterface.ORIENTATION_HORIZONTAL, getWidth());
-        }
+		setWidth(width);
+		setPositionLine(posLine);
+		setPositionColumn(posColumn);
 
-        String textToDraw = getText();
-        if (getText().length() > (getWidth() - 2)) {
-            textToDraw = getText().substring(0, getWidth() - 2);
-        }
-
-        int startPos = (getWidth() - textToDraw.length()) / 2;
-        getIO().writeInverseText(textToDraw, getPositionLine(), getPositionColumn() + startPos);
-    }
+		setText(text);
+	}
 
 
+	//--------------------------------------------------------------------------
+	// public methods
+	//--------------------------------------------------------------------------
 
-    /** Sets the text on the button */
-    public void setText(String text) {
-        if (text.length() > (getWidth() - 2)) {
-            textLabel = text.substring(0, getWidth() - 2);
-        }
-        else {
-            textLabel = text;
-        }
+	/** Draws the button */
+	@Override
+	public void paint() throws IOException {
+		if (isFocused()) {
+			getIO().drawLine(getPositionLine(), getPositionColumn() + 1, TerminalIOInterface.ORIENTATION_HORIZONTAL, getWidth() - 2);
+			getIO().writeInverseText("[", getPositionLine(), getPositionColumn());
+			getIO().writeInverseText("]", getPositionLine(), getPositionColumn() + getWidth() - 1);
+		}
+		else {
+			getIO().drawLine(getPositionLine(), getPositionColumn(), TerminalIOInterface.ORIENTATION_HORIZONTAL, getWidth());
+		}
 
-        setCursor(getPositionLine(), getPositionColumn());
+		String textToDraw = getText();
+		if (getText().length() > (getWidth() - 2)) {
+			textToDraw = getText().substring(0, getWidth() - 2);
+		}
 
-        setDirty(true);
-    }
-
-
-
-    /** Returns the text on the button */
-    public String getText() {
-        return textLabel;
-    }
-
-
-
-    /** On reciving the focus, mark dirty to redraw (e.g. the cursor) */
-    public void focusEntered() {
-        setDirty(true);
-    }
+		int startPos = (getWidth() - textToDraw.length()) / 2;
+		getIO().writeInverseText(textToDraw, getPositionLine(), getPositionColumn() + startPos);
+	}
 
 
+	/** Sets the text on the button */
+	public void setText(String text) {
+		if (text.length() > (getWidth() - 2)) {
+			textLabel = text.substring(0, getWidth() - 2);
+		}
+		else {
+			textLabel = text;
+		}
 
-    /** On losing the focus, mark dirty to redraw (e.g. the cursor) */
-    public void focusLeft() {
-        setDirty(true);
-    }
+		setCursor(getPositionLine(), getPositionColumn());
 
-
-
-    /** Retuns the current label */
-    public String toString() {
-        return getText();
-    }
-
-
-
-    /** Informs all listeners */
-    public void fireActionPerformed(TerminalEvent e) {
-        for (int i = 0; i < listener.size(); i++) {
-            ((ButtonListener)listener.elementAt(i)).actionPerformed(e);
-        }
-    }
+		setDirty(true);
+	}
 
 
-
-    /** Registers a listener */
-    public void addButtonListener(ButtonListener l) {
-        listener.add(l);
-    }
-
+	/** Returns the text on the button */
+	public String getText() {
+		return textLabel;
+	}
 
 
-    /** Removes a listener */
-    public void removeButtonListener(ButtonListener l) {
-        listener.remove(l);
-    }
+	/** On reciving the focus, mark dirty to redraw (e.g. the cursor) */
+	@Override
+	public void focusEntered() {
+		setDirty(true);
+	}
 
 
-
-    //--------------------------------------------------------------------------
-    // override abstract methods of BasicWidget
-    //--------------------------------------------------------------------------
-
-    /** Process Barcode */
-    public void processBarcodeReceived(TerminalEvent e) {
-        // nothing to do here
-    }
+	/** On losing the focus, mark dirty to redraw (e.g. the cursor) */
+	@Override
+	public void focusLeft() {
+		setDirty(true);
+	}
 
 
+	/** Retuns the current label */
+	@Override
+	public String toString() {
+		return getText();
+	}
 
-    /** Process Key Event */
-    public void processKeyPressed(TerminalEvent e) {
-        if (e.getKey() == TerminalEvent.KEY_ENTER) {
-            fireActionPerformed(e);
-        }
-    }
+
+	/** Informs all listeners */
+	public void fireActionPerformed(TerminalEvent e) {
+		for (int i = 0; i < listener.size(); i++) {
+			((ButtonListener)listener.elementAt(i)).actionPerformed(e);
+		}
+	}
+
+
+	/** Registers a listener */
+	public void addButtonListener(ButtonListener l) {
+		listener.add(l);
+	}
+
+
+	/** Removes a listener */
+	public void removeButtonListener(ButtonListener l) {
+		listener.remove(l);
+	}
+
+
+	//--------------------------------------------------------------------------
+	// override abstract methods of BasicWidget
+	//--------------------------------------------------------------------------
+
+	/** Process Barcode */
+	@Override
+	public void processBarcodeReceived(TerminalEvent e) {
+		// nothing to do here
+	}
+
+
+	/** Process Key Event */
+	@Override
+	public void processKeyPressed(TerminalEvent e) {
+		if (e.getKey() == TerminalEvent.KEY_ENTER) {
+			fireActionPerformed(e);
+		}
+	}
 
 }

@@ -1,433 +1,531 @@
 /***********************************************************************
- * 
  * This software is published under the terms of the LGPL
  * version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
  * Copyright (C) 2004 Daniel Galán y Martins
- * 
- *********************************************************************** 
- *
- * Author:   	  Daniel "tentacle" Galán y Martins
+ * Author: Daniel Galán y Martins
  * Creation date: 30.04.2003
- *  
- * Revision:      $Revision: 1.3 $
- * Checked in by: $Author: ilgian $
- * Last modified: $Date: 2009/03/04 11:35:12 $
- * 
+ * Revision: $Revision: 1.4 $
+ * Checked in by: $Author: danielgalan $
+ * Last modified: $Date: 2009/12/02 21:53:59 $
  * $Log: VT100Reader.java,v $
- * Revision 1.3  2009/03/04 11:35:12  ilgian
+ * Revision 1.4  2009/12/02 21:53:59  danielgalan
+ * naming
+ *
+ * Revision 1.3 2009/03/04 11:35:12 ilgian
  * Added IAC support through IACHanlder class
- *
- * Revision 1.2  2005/05/23 18:10:20  danielgalan
+ * Revision 1.2 2005/05/23 18:10:20 danielgalan
  * some cleaning and removing some cycles (not all removed yet)
- *
- * Revision 1.1  2004/07/26 21:40:28  danielgalan
+ * Revision 1.1 2004/07/26 21:40:28 danielgalan
  * Jalita initial cvs commit :)
- *
  **********************************************************************/
 package net.sf.jalita.io;
 
-import java.io.*;
-
-import org.apache.log4j.Logger;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import net.sf.jalita.util.Configuration;
+
+import org.apache.log4j.Logger;
 
 
 
 /**
  * VT100-compatible stream reader, almost.
- *
- * @author  Daniel "tentacle" Galán y Martins
- * @version $Revision: 1.3 $
+ * 
+ * @author Daniel Galán y Martins
+ * @version $Revision: 1.4 $
  */
 public class VT100Reader extends Reader implements VT100Constants {
 
-    //--------------------------------------------------------------------------
-    // constants
-    //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	// constants
+	//--------------------------------------------------------------------------
 
-    // states for the finite automaton in readNextKey()
-    private final static int STATE_INIT             = 0;
-    private final static int STATE_ESC              = 1;
-    private final static int STATE_BARCODE          = 2;
-    private final static int STATE_FUNCTION_KEY     = 3;
-    private final static int STATE_FUNCTION_KEY_EXT = 4;
-    private final static int STATE_CURSOR           = 5;
-    private final static int STATE_FINISHED         = 6;
+	// states for the finite automaton in readNextKey()
+	private final static int STATE_INIT = 0;
+	private final static int STATE_ESC = 1;
+	private final static int STATE_BARCODE = 2;
+	private final static int STATE_FUNCTION_KEY = 3;
+	private final static int STATE_FUNCTION_KEY_EXT = 4;
+	private final static int STATE_CURSOR = 5;
+	private final static int STATE_FINISHED = 6;
 
-
-
-    //--------------------------------------------------------------------------
-    // class variables
-    //--------------------------------------------------------------------------
-
-    /** log4j reference */
-    public final static Logger log = Logger.getLogger(Configuration.class);
-
-    /** Jalita configuration-properties */
-    private static Configuration config = Configuration.getConfiguration();
-
-
-
-    //--------------------------------------------------------------------------
-    // instance variables
-    //--------------------------------------------------------------------------
-
-    /** Tells us if the stream is closed */
-    private boolean closed = false;
-
-    /** reads CRLF and CR, and if only CR and not CRLF was read  the following character will be pushed back */
-    private InputStreamReader in;
-
-    /** the current state of the finite automaton, read from readNextKey() */
-    private int state;
-
-    /** saves incoming barcodes recived by readNextKey() */
-    private StringBuffer barcodeBuffer = new StringBuffer();
-
-    /** state of CR keys */
-    private boolean carriageReturnRecived = false;
-
-    /** barcode received and terminated by CR, to intercept following LF */
-    private boolean barcodeTerminated = false;
-
-    /** IAC control command handler */
-    private IACHandler m_IACHandler;
-    //--------------------------------------------------------------------------
-    // constructors
-    //--------------------------------------------------------------------------
-
-    /** Creates a new VT100Reader */
-    public VT100Reader(InputStream in) {
-        log.debug("Creating instance of VT100Reader");
-        this.in = new InputStreamReader(in);
-
-        // clear initial buffer
-        try {
-            Thread.sleep(config.getTimeBeforeClearBuffer());
-            in.skip(in.available());
-        }
-        catch (Exception ex) {
-        }
-    }
-
-
-    public void setIACHandler(IACHandler handler){
-    	m_IACHandler = handler;
-    }
-    
-    public IACHandler getIACHandler(){
-    	return m_IACHandler;
-    }
-    
-
-    //--------------------------------------------------------------------------
-    // private & protected methods
-    //--------------------------------------------------------------------------
-
-    /** checks if the reader is usable, throws elswise an IOException */
-    protected void checkReaderState() throws IOException {
-    	if (closed) {
-    		throw new IOException("reader closed");
-    	}
-    }
-
-
-
-    //--------------------------------------------------------------------------
-    // public methods
-    //--------------------------------------------------------------------------
-
-    /** creates an event from the incoming  terminaldata generated by userinteraction.
-     * this is a finite automaton, which evaluates key and barcodes recived by the terminal */
-    public TerminalEvent readNextEvent() throws IOException {
-        TerminalEvent te = null;  // triggered result event
-        state = STATE_INIT;  // reset state to initial state
-
-        while (state != STATE_FINISHED) {
-        	int key = m_IACHandler.read();  // this method blocks the thread ('cause its waits for userinput)
-
-            // assign new event
-            if (state == STATE_INIT) {
-                // escape-sequence
-                if (key == ASCII_ESC) {
-                    log.debug("Key is escape sequenz: [" + key + "]");
-                    state = STATE_ESC;
-                }
-
-                // barcode start character
-                else if (key == BARCODE_START) {
-                    log.debug("Key is barcode start: [" + key + "]");
-                    state = STATE_BARCODE;
-                }
-
-                // Return, sequence CR or LF or CRLF
-                else if (key == CR) {
-                    carriageReturnRecived = true;
-                    te = new TerminalEvent(this, TerminalEvent.KEY_ENTER);
-                    state = STATE_FINISHED;
-                    log.debug("Key is return (CR): [" + key + "]");
-                }
-
-                else if (key == LF) {
-                    if (carriageReturnRecived ) {
-                        log.debug("Key is return (CRLF): [" + key + "] -> read over");
-                    }
-                    else if (barcodeTerminated) {
-                        barcodeTerminated = false;
-                        log.debug("barcode completed with LF: [" + key + "] -> read over");
-                    }
-                    else {
-                        te = new TerminalEvent(this, TerminalEvent.KEY_ENTER);
-                        state = STATE_FINISHED;
-                        log.debug("Key is return (LF): [" + key + "]");
-                    }
-                    carriageReturnRecived = false;
-                }
-
-                // Common keys (a-z, A-Z, 0-9, umlauts, etc.)
-                else {
-                    log.debug("Key is common key: [" + key + "]");
-
-                    switch (key) {
-                        case SPECIAL_AE_BIG: te = new TerminalEvent(this, 'Ä'); break;
-                        case SPECIAL_AE_SMALL: te = new TerminalEvent(this, 'ä'); break;
-
-                        case SPECIAL_OE_BIG: te = new TerminalEvent(this, 'Ö'); break;
-                        case SPECIAL_OE_SMALL: te = new TerminalEvent(this, 'ö'); break;
-
-                        case SPECIAL_UE_BIG: te = new TerminalEvent(this, 'Ü'); break;
-                        case SPECIAL_UE_SMALL: te = new TerminalEvent(this, 'ü'); break;
-
-                        case SPECIAL_SZ: te = new TerminalEvent(this, 'ß'); break;
-                        case SPECIAL_GRAD: te = new TerminalEvent(this, '°'); break;
-
-                        case SPECIAL_TAB: te = new TerminalEvent(this, TerminalEvent.KEY_TAB); break;
-                        case SPECIAL_PAUSE: te = new TerminalEvent(this, TerminalEvent.KEY_PAUSE); break;
-                        case SPECIAL_BACKSPACE: te = new TerminalEvent(this, TerminalEvent.KEY_BACKSPACE); break;
-                        case SPECIAL_DEL: te = new TerminalEvent(this, TerminalEvent.KEY_DEL); break;
-
-                        // Roof-character send afterwards 0x00, could be ignored (usually not used)
-                        case SPECIAL_ROOF: te = new TerminalEvent(this, '^'); read(); break;
-
-                        default: te = new TerminalEvent(this, (char)key);
-                    }
-
-                    state = STATE_FINISHED;
-                }
-            }  // end STATE_IDLE
-
-
-            // determine escape sequence
-            else if (state == STATE_ESC) {
-                if (key == ESC_PARAM_F_KEY) {
-                    log.debug("Key is function key: [" + key + "]");
-                    state = STATE_FUNCTION_KEY;
-                }
-
-                else if (key == ESC_PARAM_CURSOR) {
-                    log.debug("Key is cursor key: [" + key + "]");
-                    state = STATE_CURSOR;
-                }
-
-                else if (key == ESC_PARAM_PIPE) {
-                    log.debug("Key is pipe key: [" + key + "]");
-                    te = new TerminalEvent(this, '|');
-                    state = STATE_FINISHED;
-                }
-
-                // unknown escape sequence
-                else {
-                    log.warn("esc unknown: [" + key + "]");
-                    te = new TerminalEvent(this, TerminalEvent.KEY_UNDEFINED);
-                    state = STATE_FINISHED;
-                }
-            }  // end STATE_ESC
-
-
-            // determine function keys
-            else if (state == STATE_FUNCTION_KEY) {
-                int fKey = TerminalEvent.KEY_F01;
-                log.debug("Key is function key: [" + key + "]");
-
-                switch (key) {
-                    case ESC_F_01: fKey = TerminalEvent.KEY_F01; break;
-                    case ESC_F_02: fKey = TerminalEvent.KEY_F02; break;
-                    case ESC_F_03: fKey = TerminalEvent.KEY_F03; break;
-                    case ESC_F_04: fKey = TerminalEvent.KEY_F04; break;
-
-                    // alternatives (was originally not used by real mobile terminals, just for development (e.g. putty) (used by intermecs))
-                    case ESC_F_05_ALT: fKey = TerminalEvent.KEY_F05; break;
-                    case ESC_F_06_ALT: fKey = TerminalEvent.KEY_F06; break;
-                    case ESC_F_07_ALT: fKey = TerminalEvent.KEY_F07; break;
-                    case ESC_F_08_ALT: fKey = TerminalEvent.KEY_F08; break;
-                    case ESC_F_09_ALT: fKey = TerminalEvent.KEY_F09; break;
-                    case ESC_F_10_ALT: fKey = TerminalEvent.KEY_F10; break;
-                    case ESC_F_11_ALT: fKey = TerminalEvent.KEY_F11; break;
-                    case ESC_F_12_ALT: fKey = TerminalEvent.KEY_F12; break;
-                    default: fKey = TerminalEvent.KEY_F01;
-                }
-
-                te = new TerminalEvent(this, fKey);
-
-                state = STATE_FINISHED;
-            }  // end STATE_FUNCTION_KEY
-
-
-            // determine extended functions keys
-            else if (state == STATE_FUNCTION_KEY_EXT) {
-                int fKey = TerminalEvent.KEY_F01;
-                log.debug("Key is extended function key: [" + key + "]");
-
-                switch (key) {
-                    case ESC_F_05: fKey = TerminalEvent.KEY_F05; break;
-                    case ESC_F_06: fKey = TerminalEvent.KEY_F06; break;
-                    case ESC_F_07: fKey = TerminalEvent.KEY_F07; break;
-                    case ESC_F_08: fKey = TerminalEvent.KEY_F08; break;
-                    case ESC_F_09: fKey = TerminalEvent.KEY_F09; break;
-                    case ESC_F_10: fKey = TerminalEvent.KEY_F10; break;
-                    case ESC_F_11: fKey = TerminalEvent.KEY_F11; break;
-                    case ESC_F_12: fKey = TerminalEvent.KEY_F12; break;
-
-                    default: fKey = TerminalEvent.KEY_F01;
-                }
-
-                // ignore following character (0x7e)
-                read();
-
-                te = new TerminalEvent(this, fKey);
-
-                state = STATE_FINISHED;
-            }  // end STATE_FUNCTION_KEY_EXT
-
-
-            // determine cursor keys
-            else if (state == STATE_CURSOR) {
-                // key isn't cursor command, but extended function key (F5-12)
-                if ((key == ESC_PARAM_F_KEY_1) || (key == ESC_PARAM_F_KEY_2)) {
-                    state = STATE_FUNCTION_KEY_EXT;
-                }
-
-                // key is cursor key
-                else {
-                    int cKey = TerminalEvent.KEY_F01;
-                    log.debug("Key is cursor key: [" + key + "]");
-
-                    switch (key) {
-                        case ESC_CURSOR_UP: cKey = TerminalEvent.KEY_UP; break;
-                        case ESC_CURSOR_DOWN: cKey = TerminalEvent.KEY_DOWN; break;
-                        case ESC_CURSOR_RIGHT: cKey = TerminalEvent.KEY_RIGHT; break;
-                        case ESC_CURSOR_LEFT: cKey = TerminalEvent.KEY_LEFT; break;
-                        case ESC_CURSOR_TAB_BACK: cKey = TerminalEvent.KEY_TAB_BACK; break;
-
-                        // the extended cursor key allways follows a '126' key, which will be ignored here
-                        case ESC_CURSOR_EXT_PASTE: read(); cKey = TerminalEvent.KEY_PASTE; break;
-                        case ESC_CURSOR_EXT_DEL: read(); cKey = TerminalEvent.KEY_DEL; break;
-                        case ESC_CURSOR_EXT_HOME: read(); cKey = TerminalEvent.KEY_HOME; break;
-                        case ESC_CURSOR_EXT_END: read(); cKey = TerminalEvent.KEY_END; break;
-                        case ESC_CURSOR_EXT_PAGE_UP: read(); cKey = TerminalEvent.KEY_PAGE_UP; break;
-                        case ESC_CURSOR_EXT_PAGE_DOWN: read(); cKey = TerminalEvent.KEY_PAGE_DOWN; break;
-
-                        default: cKey = TerminalEvent.KEY_F01;
-                    }
-
-                    te = new TerminalEvent(this, cKey);
-
-                    state = STATE_FINISHED;
-                }
-            }  // end STATE_CURSOR
-
-
-            // read barcode completely until character BARCODE_END comes
-            else if (state == STATE_BARCODE) {
-                log.debug("Key ist BarcodeKey mit KeyCode: [" + key + "]");
-                while (key != BARCODE_END) {
-                    barcodeBuffer.append((char)key);
-                    key = read();
-                }
-                barcodeTerminated = true;
-
-                te = new TerminalEvent(this, barcodeBuffer.toString());
-                barcodeBuffer.setLength(0);
-
-                state = STATE_FINISHED;
-            }  // end STATE_BARCODE
-
-
-        }  // while (state != STATE_FINISHED)
-
-        return te;
-    }
-
-
-
-    //--------------------------------------------------------------------------
-    // overriding abstract methods of Writer
-    //--------------------------------------------------------------------------
-
-    public int read(char[] cbuf, int off, int len) throws IOException {
-        synchronized (lock) {
-        	checkReaderState();
-        		return in.read(cbuf, off, len);
-        }
-    }
-
-
-
-    public long skip(long n) throws IOException {
-    	checkReaderState();
-        return super.skip(n);
-    }
-
-
-
-    public void reset() throws IOException {
-    	checkReaderState();
-        super.reset();
-    }
-
-
-
-    public void mark(int readAheadLimit) throws IOException {
-    	checkReaderState();
-        super.mark(readAheadLimit);
-    }
-
-
-
-    public void close() throws IOException {
-        closed = true;
-    }
-
-
-    public int read(char[] cbuf) throws IOException {
-    	checkReaderState();
-        return super.read(cbuf);
-    }
-
-
-
-    public boolean markSupported() {
-        return false;
-    }
-
-
-    public int read() throws IOException {
-    	checkReaderState();
-        int result = super.read();
-        if (result == -1) {
-            throw new IOException();
-        }
-        return result;
-    }
-
-
-    public boolean ready() throws IOException {
-        synchronized (lock) {
-        	checkReaderState();
-            return super.ready();
-        }
-    }
+	//--------------------------------------------------------------------------
+	// class variables
+	//--------------------------------------------------------------------------
+
+	/** log4j reference */
+	public final static Logger log = Logger.getLogger(Configuration.class);
+
+	/** Jalita configuration-properties */
+	private static Configuration config = Configuration.getConfiguration();
+
+	//--------------------------------------------------------------------------
+	// instance variables
+	//--------------------------------------------------------------------------
+
+	/** Tells us if the stream is closed */
+	private boolean closed = false;
+
+	/**
+	 * reads CRLF and CR, and if only CR and not CRLF was read the following
+	 * character will be pushed back
+	 */
+	private final InputStreamReader in;
+
+	/** the current state of the finite automaton, read from readNextKey() */
+	private int state;
+
+	/** saves incoming barcodes recived by readNextKey() */
+	private final StringBuffer barcodeBuffer = new StringBuffer();
+
+	/** state of CR keys */
+	private boolean carriageReturnRecived = false;
+
+	/** barcode received and terminated by CR, to intercept following LF */
+	private boolean barcodeTerminated = false;
+
+	/** IAC control command handler */
+	private IACHandler m_IACHandler;
+
+
+	//--------------------------------------------------------------------------
+	// constructors
+	//--------------------------------------------------------------------------
+
+	/** Creates a new VT100Reader */
+	public VT100Reader(InputStream in) {
+		log.debug("Creating instance of VT100Reader");
+		this.in = new InputStreamReader(in);
+
+		// clear initial buffer
+		try {
+			Thread.sleep(config.getTimeBeforeClearBuffer());
+			in.skip(in.available());
+		}
+		catch (Exception ex) {
+		}
+	}
+
+
+	public void setIACHandler(IACHandler handler) {
+		m_IACHandler = handler;
+	}
+
+
+	public IACHandler getIACHandler() {
+		return m_IACHandler;
+	}
+
+
+	//--------------------------------------------------------------------------
+	// private & protected methods
+	//--------------------------------------------------------------------------
+
+	/** checks if the reader is usable, throws elswise an IOException */
+	protected void checkReaderState() throws IOException {
+		if (closed) {
+			throw new IOException("reader closed");
+		}
+	}
+
+
+	//--------------------------------------------------------------------------
+	// public methods
+	//--------------------------------------------------------------------------
+
+	/**
+	 * creates an event from the incoming terminaldata generated by
+	 * userinteraction.
+	 * this is a finite automaton, which evaluates key and barcodes recived by
+	 * the terminal
+	 */
+	public TerminalEvent readNextEvent() throws IOException {
+		TerminalEvent te = null; // triggered result event
+		state = STATE_INIT; // reset state to initial state
+
+		while (state != STATE_FINISHED) {
+			int key = m_IACHandler.read(); // this method blocks the thread ('cause its waits for userinput)
+
+			// assign new event
+			if (state == STATE_INIT) {
+				// escape-sequence
+				if (key == ASCII_ESC) {
+					log.debug("Key is escape sequenz: [" + key + "]");
+					state = STATE_ESC;
+				}
+
+				// barcode start character
+				else if (key == BARCODE_START) {
+					log.debug("Key is barcode start: [" + key + "]");
+					state = STATE_BARCODE;
+				}
+
+				// Return, sequence CR or LF or CRLF
+				else if (key == CR) {
+					carriageReturnRecived = true;
+					te = new TerminalEvent(this, TerminalEvent.KEY_ENTER);
+					state = STATE_FINISHED;
+					log.debug("Key is return (CR): [" + key + "]");
+				}
+
+				else if (key == LF) {
+					if (carriageReturnRecived) {
+						log.debug("Key is return (CRLF): [" + key + "] -> read over");
+					}
+					else if (barcodeTerminated) {
+						barcodeTerminated = false;
+						log.debug("barcode completed with LF: [" + key + "] -> read over");
+					}
+					else {
+						te = new TerminalEvent(this, TerminalEvent.KEY_ENTER);
+						state = STATE_FINISHED;
+						log.debug("Key is return (LF): [" + key + "]");
+					}
+					carriageReturnRecived = false;
+				}
+
+				// Common keys (a-z, A-Z, 0-9, umlauts, etc.)
+				else {
+					log.debug("Key is common key: [" + key + "]");
+
+					switch (key) {
+						case SPECIAL_AE_BIG:
+							te = new TerminalEvent(this, 'Ä');
+							break;
+						case SPECIAL_AE_SMALL:
+							te = new TerminalEvent(this, 'ä');
+							break;
+
+						case SPECIAL_OE_BIG:
+							te = new TerminalEvent(this, 'Ö');
+							break;
+						case SPECIAL_OE_SMALL:
+							te = new TerminalEvent(this, 'ö');
+							break;
+
+						case SPECIAL_UE_BIG:
+							te = new TerminalEvent(this, 'Ü');
+							break;
+						case SPECIAL_UE_SMALL:
+							te = new TerminalEvent(this, 'ü');
+							break;
+
+						case SPECIAL_SZ:
+							te = new TerminalEvent(this, 'ß');
+							break;
+						case SPECIAL_GRAD:
+							te = new TerminalEvent(this, '°');
+							break;
+
+						case SPECIAL_TAB:
+							te = new TerminalEvent(this, TerminalEvent.KEY_TAB);
+							break;
+						case SPECIAL_PAUSE:
+							te = new TerminalEvent(this, TerminalEvent.KEY_PAUSE);
+							break;
+						case SPECIAL_BACKSPACE:
+							te = new TerminalEvent(this, TerminalEvent.KEY_BACKSPACE);
+							break;
+						case SPECIAL_DEL:
+							te = new TerminalEvent(this, TerminalEvent.KEY_DEL);
+							break;
+
+						// Roof-character send afterwards 0x00, could be ignored (usually not used)
+						case SPECIAL_ROOF:
+							te = new TerminalEvent(this, '^');
+							read();
+							break;
+
+						default:
+							te = new TerminalEvent(this, (char)key);
+					}
+
+					state = STATE_FINISHED;
+				}
+			} // end STATE_IDLE
+
+			// determine escape sequence
+			else if (state == STATE_ESC) {
+				if (key == ESC_PARAM_F_KEY) {
+					log.debug("Key is function key: [" + key + "]");
+					state = STATE_FUNCTION_KEY;
+				}
+
+				else if (key == ESC_PARAM_CURSOR) {
+					log.debug("Key is cursor key: [" + key + "]");
+					state = STATE_CURSOR;
+				}
+
+				else if (key == ESC_PARAM_PIPE) {
+					log.debug("Key is pipe key: [" + key + "]");
+					te = new TerminalEvent(this, '|');
+					state = STATE_FINISHED;
+				}
+
+				// unknown escape sequence
+				else {
+					log.warn("esc unknown: [" + key + "]");
+					te = new TerminalEvent(this, TerminalEvent.KEY_UNDEFINED);
+					state = STATE_FINISHED;
+				}
+			} // end STATE_ESC
+
+			// determine function keys
+			else if (state == STATE_FUNCTION_KEY) {
+				int fKey = TerminalEvent.KEY_F01;
+				log.debug("Key is function key: [" + key + "]");
+
+				switch (key) {
+					case ESC_F_01:
+						fKey = TerminalEvent.KEY_F01;
+						break;
+					case ESC_F_02:
+						fKey = TerminalEvent.KEY_F02;
+						break;
+					case ESC_F_03:
+						fKey = TerminalEvent.KEY_F03;
+						break;
+					case ESC_F_04:
+						fKey = TerminalEvent.KEY_F04;
+						break;
+
+					// alternatives (was originally not used by real mobile terminals, just for development (e.g. putty) (used by intermecs))
+					case ESC_F_05_ALT:
+						fKey = TerminalEvent.KEY_F05;
+						break;
+					case ESC_F_06_ALT:
+						fKey = TerminalEvent.KEY_F06;
+						break;
+					case ESC_F_07_ALT:
+						fKey = TerminalEvent.KEY_F07;
+						break;
+					case ESC_F_08_ALT:
+						fKey = TerminalEvent.KEY_F08;
+						break;
+					case ESC_F_09_ALT:
+						fKey = TerminalEvent.KEY_F09;
+						break;
+					case ESC_F_10_ALT:
+						fKey = TerminalEvent.KEY_F10;
+						break;
+					case ESC_F_11_ALT:
+						fKey = TerminalEvent.KEY_F11;
+						break;
+					case ESC_F_12_ALT:
+						fKey = TerminalEvent.KEY_F12;
+						break;
+					default:
+						fKey = TerminalEvent.KEY_F01;
+				}
+
+				te = new TerminalEvent(this, fKey);
+
+				state = STATE_FINISHED;
+			} // end STATE_FUNCTION_KEY
+
+			// determine extended functions keys
+			else if (state == STATE_FUNCTION_KEY_EXT) {
+				int fKey = TerminalEvent.KEY_F01;
+				log.debug("Key is extended function key: [" + key + "]");
+
+				switch (key) {
+					case ESC_F_05:
+						fKey = TerminalEvent.KEY_F05;
+						break;
+					case ESC_F_06:
+						fKey = TerminalEvent.KEY_F06;
+						break;
+					case ESC_F_07:
+						fKey = TerminalEvent.KEY_F07;
+						break;
+					case ESC_F_08:
+						fKey = TerminalEvent.KEY_F08;
+						break;
+					case ESC_F_09:
+						fKey = TerminalEvent.KEY_F09;
+						break;
+					case ESC_F_10:
+						fKey = TerminalEvent.KEY_F10;
+						break;
+					case ESC_F_11:
+						fKey = TerminalEvent.KEY_F11;
+						break;
+					case ESC_F_12:
+						fKey = TerminalEvent.KEY_F12;
+						break;
+
+					default:
+						fKey = TerminalEvent.KEY_F01;
+				}
+
+				// ignore following character (0x7e)
+				read();
+
+				te = new TerminalEvent(this, fKey);
+
+				state = STATE_FINISHED;
+			} // end STATE_FUNCTION_KEY_EXT
+
+			// determine cursor keys
+			else if (state == STATE_CURSOR) {
+				// key isn't cursor command, but extended function key (F5-12)
+				if ((key == ESC_PARAM_F_KEY_1) || (key == ESC_PARAM_F_KEY_2)) {
+					state = STATE_FUNCTION_KEY_EXT;
+				}
+
+				// key is cursor key
+				else {
+					int cKey = TerminalEvent.KEY_F01;
+					log.debug("Key is cursor key: [" + key + "]");
+
+					switch (key) {
+						case ESC_CURSOR_UP:
+							cKey = TerminalEvent.KEY_UP;
+							break;
+						case ESC_CURSOR_DOWN:
+							cKey = TerminalEvent.KEY_DOWN;
+							break;
+						case ESC_CURSOR_RIGHT:
+							cKey = TerminalEvent.KEY_RIGHT;
+							break;
+						case ESC_CURSOR_LEFT:
+							cKey = TerminalEvent.KEY_LEFT;
+							break;
+						case ESC_CURSOR_TAB_BACK:
+							cKey = TerminalEvent.KEY_TAB_BACK;
+							break;
+
+						// the extended cursor key allways follows a '126' key, which will be ignored here
+						case ESC_CURSOR_EXT_PASTE:
+							read();
+							cKey = TerminalEvent.KEY_PASTE;
+							break;
+						case ESC_CURSOR_EXT_DEL:
+							read();
+							cKey = TerminalEvent.KEY_DEL;
+							break;
+						case ESC_CURSOR_EXT_HOME:
+							read();
+							cKey = TerminalEvent.KEY_HOME;
+							break;
+						case ESC_CURSOR_EXT_END:
+							read();
+							cKey = TerminalEvent.KEY_END;
+							break;
+						case ESC_CURSOR_EXT_PAGE_UP:
+							read();
+							cKey = TerminalEvent.KEY_PAGE_UP;
+							break;
+						case ESC_CURSOR_EXT_PAGE_DOWN:
+							read();
+							cKey = TerminalEvent.KEY_PAGE_DOWN;
+							break;
+
+						default:
+							cKey = TerminalEvent.KEY_F01;
+					}
+
+					te = new TerminalEvent(this, cKey);
+
+					state = STATE_FINISHED;
+				}
+			} // end STATE_CURSOR
+
+			// read barcode completely until character BARCODE_END comes
+			else if (state == STATE_BARCODE) {
+				log.debug("Key ist BarcodeKey mit KeyCode: [" + key + "]");
+				while (key != BARCODE_END) {
+					barcodeBuffer.append((char)key);
+					key = read();
+				}
+				barcodeTerminated = true;
+
+				te = new TerminalEvent(this, barcodeBuffer.toString());
+				barcodeBuffer.setLength(0);
+
+				state = STATE_FINISHED;
+			} // end STATE_BARCODE
+
+		} // while (state != STATE_FINISHED)
+
+		return te;
+	}
+
+
+	//--------------------------------------------------------------------------
+	// overriding abstract methods of Writer
+	//--------------------------------------------------------------------------
+
+	@Override
+	public int read(char[] cbuf, int off, int len) throws IOException {
+		synchronized (lock) {
+			checkReaderState();
+			return in.read(cbuf, off, len);
+		}
+	}
+
+
+	@Override
+	public long skip(long n) throws IOException {
+		checkReaderState();
+		return super.skip(n);
+	}
+
+
+	@Override
+	public void reset() throws IOException {
+		checkReaderState();
+		super.reset();
+	}
+
+
+	@Override
+	public void mark(int readAheadLimit) throws IOException {
+		checkReaderState();
+		super.mark(readAheadLimit);
+	}
+
+
+	@Override
+	public void close() throws IOException {
+		closed = true;
+	}
+
+
+	@Override
+	public int read(char[] cbuf) throws IOException {
+		checkReaderState();
+		return super.read(cbuf);
+	}
+
+
+	@Override
+	public boolean markSupported() {
+		return false;
+	}
+
+
+	@Override
+	public int read() throws IOException {
+		checkReaderState();
+		int result = super.read();
+		if (result == -1) {
+			throw new IOException();
+		}
+		return result;
+	}
+
+
+	@Override
+	public boolean ready() throws IOException {
+		synchronized (lock) {
+			checkReaderState();
+			return super.ready();
+		}
+	}
 
 }
