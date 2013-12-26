@@ -7,9 +7,11 @@
 	<name>jalita</name>
 	<description>Java Light Terminal Adapter</description>
 
-	<prerequisites>
-		<maven>3.1.1</maven>
-	</prerequisites>
+	<parent>
+		<groupId>de.galan</groupId>
+		<artifactId>parent</artifactId>
+		<version>0.1</version>
+	</parent>
 
 	<properties>
 		<jdk.compiler.version>1.5</jdk.compiler.version>
