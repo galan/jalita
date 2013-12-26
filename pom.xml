@@ -28,8 +28,4 @@
 		</dependency>
 	</dependencies>
 
-	<build>
-		<sourceDirectory>${basedir}/src</sourceDirectory>
-	</build>
-
 </project>
