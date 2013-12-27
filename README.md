@@ -13,3 +13,7 @@ A very basic and simple form, created with Jalita
 ![A very basic and simple form, created with Jalita](https://github.com/d8bitr/jalita/raw/master/images/readme-02.jpg)
 
 
+
+# Integration
+
+Via Maven - use the [maven repository and artifact](https://github.com/d8bitr/maven-repository) on github.
