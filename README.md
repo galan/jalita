@@ -16,4 +16,4 @@ A very basic and simple form, created with Jalita
 
 # Integration
 
-Via Maven - use the [maven repository and artifact](https://github.com/d8bitr/maven-repository) on github.
+Use the [maven repository and artifact](https://github.com/d8bitr/maven-repository) on github.
