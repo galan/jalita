@@ -6,14 +6,14 @@ Screenshots
 -----------
 Form with some basic Widgets (from the example application)
 
-![Form with some basic Widgets (from the example application)](https://github.com/d8bitr/jalita/raw/master/images/readme-01.jpg)
+![Form with some basic Widgets (from the example application)](https://github.com/galan/jalita/raw/master/images/readme-01.jpg)
 
 A very basic and simple form, created with Jalita
 
-![A very basic and simple form, created with Jalita](https://github.com/d8bitr/jalita/raw/master/images/readme-02.jpg)
+![A very basic and simple form, created with Jalita](https://github.com/galan/jalita/raw/master/images/readme-02.jpg)
 
 
 
 # Integration
 
-Use the [maven repository and artifact](https://github.com/d8bitr/maven-repository) on github.
+Use the [maven repository and artifact](https://github.com/galan/maven-repository) on github.

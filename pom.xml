@@ -18,8 +18,8 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:git:ssh://git@github.com/d8bitr/jalita.git</developerConnection>
-		<url>https://github.com/d8bitr/jalita</url>
+		<developerConnection>scm:git:ssh://git@github.com/galan/jalita.git</developerConnection>
+		<url>https://github.com/galan/jalita</url>
 	</scm>
 
 	<dependencies>
