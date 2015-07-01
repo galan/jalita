@@ -24,7 +24,7 @@ import net.sf.jalita.ui.automation.*;
 /**
  * Eine implemtentierung FormAutomatenSets zum testen
  *
- * @author  Daniel Galán y Martins [DG]
+ * @author  Daniel GalÃ¡n y Martins [DG]
  * @version 0.1
  */
 
@@ -84,7 +84,7 @@ public class TestAutomation extends FormAutomationSet {
     public void doAction(int state) {
         switch (state) {
             case ACTION_FINISHED:
-                // -- aktion was auch immer ausführen --
+                // -- aktion was auch immer ausfï¿½hren --
                 setState(STATE_FINISHED);
                 break;
         }

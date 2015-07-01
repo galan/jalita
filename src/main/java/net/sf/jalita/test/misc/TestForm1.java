@@ -27,7 +27,7 @@ import net.sf.jalita.ui.forms.*;
 /**
  * Form zum Testen
  *
- * @author  Daniel Galán y Martins [DG]
+ * @author  Daniel GalÃ¡n y Martins [DG]
  * @version 0.1
  */
 
@@ -104,7 +104,7 @@ public class TestForm1 extends BasicForm {
 
         Vector v = new Vector(10);
 
-        v.add("äöüÄÖÜß");
+        v.add("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         v.add("Hello");
         v.add("Hell");
         v.add("Otaku");

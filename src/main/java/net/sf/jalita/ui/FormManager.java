@@ -2,8 +2,8 @@
  * This software is published under the terms of the LGPL
  * version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
- * Copyright (C) 2004 Daniel Gal·n y Martins
- * Author: Daniel Gal·n y Martins
+ * Copyright (C) 2004 Daniel Gal√°n y Martins
+ * Author: Daniel Gal√°n y Martins
  * Creation date: 02.05.2003
  * Revision: $Revision: 1.4 $
  * Checked in by: $Author: danielgalan $
@@ -43,7 +43,7 @@ import org.apache.log4j.Logger;
  * Manages all Forms associated with a Session, as well as a Stack with
  * FormAutomationSets.
  * 
- * @author Daniel Gal·n y Martins
+ * @author Daniel Gal√°n y Martins
  * @version $Revision: 1.4 $
  */
 public class FormManager implements TerminalEventListener {

@@ -41,7 +41,7 @@ import net.sf.jalita.ui.forms.BasicForm;
 /**
  * Abstract class for widgets that represent a list
  * 
- * @author Daniel Gal·n y Martins
+ * @author Daniel Gal√°n y Martins
  * @version $Revision: 1.6 $
  */
 public class MenuWidget extends ListWidget {

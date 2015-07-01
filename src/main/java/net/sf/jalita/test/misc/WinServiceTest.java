@@ -23,7 +23,7 @@ import java.io.*;
  * Klasse zum Testen der Anbieter die Java-Anwendungen als Windows-Dienst
  * laufen lassen.
  *
- * @author  Daniel Gal·n y Martins [DG]
+ * @author  Daniel Gal√°n y Martins [DG]
  * @version 0.1
  */
 

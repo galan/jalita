@@ -2,8 +2,8 @@
  * This software is published under the terms of the LGPL
  * version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
- * Copyright (C) 2004 Daniel Galán y Martins
- * Author: Daniel Galán y Martins
+ * Copyright (C) 2004 Daniel GalÃ¡n y Martins
+ * Author: Daniel GalÃ¡n y Martins
  * Creation date: 13.05.2003
  * Revision: $Revision: 1.5 $
  * Checked in by: $Author: danielgalan $
@@ -38,7 +38,7 @@ import net.sf.jalita.ui.forms.BasicForm;
 /**
  * Abstract class for widgets that represent a list
  * 
- * @author Daniel Galán y Martins
+ * @author Daniel GalÃ¡n y Martins
  * @version $Revision: 1.5 $
  */
 public class ListWidget extends BasicWidget {
@@ -250,7 +250,7 @@ public class ListWidget extends BasicWidget {
 
 				if (obj != null) {
 
-					// text beschneiden, falls zu lang für Liste
+					// text beschneiden, falls zu lang fï¿½r Liste
 					String listText = null;
 					int maxWidth = positionCursor ? getWidth() - 2 : getWidth();
 

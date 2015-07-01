@@ -2,8 +2,8 @@
  * This software is published under the terms of the LGPL
  * version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
- * Copyright (C) 2004 Daniel Galán y Martins
- * Author: Daniel Galán y Martins
+ * Copyright (C) 2004 Daniel GalÃ¡n y Martins
+ * Author: Daniel GalÃ¡n y Martins
  * Creation date: 03.05.2003
  * Revision: $Revision: 1.6 $
  * Checked in by: $Author: danielgalan $
@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
 /**
  * Skeletal structure for Form's
  * 
- * @author Daniel Galán y Martins
+ * @author Daniel GalÃ¡n y Martins
  * @version $Revision: 1.6 $
  */
 
@@ -282,7 +282,7 @@ public abstract class BasicForm implements TerminalEventListener {
 
 	/** Paint-routine to draw the dirty widgets */
 	public void paint() throws IOException {
-		// bildschirm falls benötigt löschen
+		// bildschirm falls benï¿½tigt lï¿½schen
 		if (clearScreen) {
 			clearScreen = false;
 			getIO().clearScreen();

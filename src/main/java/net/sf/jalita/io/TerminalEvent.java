@@ -2,8 +2,8 @@
  * This software is published under the terms of the LGPL
  * version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
- * Copyright (C) 2004 Daniel Galán y Martins
- * Author: Daniel Galán y Martins
+ * Copyright (C) 2004 Daniel GalÃ¡n y Martins
+ * Author: Daniel GalÃ¡n y Martins
  * Creation date: 04.05.2003
  * Revision: $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
  * terminal.
  * Such an event could be a key is pressed or an barcode has been scanned.
  * 
- * @author Daniel Galán y Martins
+ * @author Daniel GalÃ¡n y Martins
  * @version $Revision: 1.3 $
  */
 public class TerminalEvent extends EventObject {
@@ -210,7 +210,7 @@ public class TerminalEvent extends EventObject {
 	}
 
 
-	/** Gibt bei druckbaren Zeichen dieses als String zurück */
+	/** Gibt bei druckbaren Zeichen dieses als String zurï¿½ck */
 	public String getKeyAsString() {
 		if (!isPrintable()) {
 			return "";

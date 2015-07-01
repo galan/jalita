@@ -2,8 +2,8 @@
  * This software is published under the terms of the LGPL
  * version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
- * Copyright (C) 2004 Daniel Gal·n y Martins
- * Author: Daniel Gal·n y Martins
+ * Copyright (C) 2004 Daniel Gal√°n y Martins
+ * Author: Daniel Gal√°n y Martins
  * Creation date: 02.07.2003
  * Revision: $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
@@ -32,7 +32,7 @@ import net.sf.jalita.ui.widgets.LineWidget;
 /**
  * Dialoge mit zwei Benutzer-Optionen
  * 
- * @author Daniel Gal·n y Martins
+ * @author Daniel Gal√°n y Martins
  * @version $Revision: 1.3 $
  */
 public class OptionForm extends BasicForm {

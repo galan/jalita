@@ -2,8 +2,8 @@
  * This software is published under the terms of the LGPL
  * version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
- * Copyright (C) 2004 Daniel Galán y Martins
- * Author: Daniel Galán y Martins
+ * Copyright (C) 2004 Daniel GalÃ¡n y Martins
+ * Author: Daniel GalÃ¡n y Martins
  * Creation date: 17.10.2003
  * Revision: $Revision: 1.3 $
  * Checked in by: $Author: danielgalan $
@@ -32,7 +32,7 @@ import net.sf.jalita.ui.forms.BasicForm;
 /**
  * A formatted Textfield for numbers with different inputmodes
  * 
- * @author Daniel Galán y Martins
+ * @author Daniel GalÃ¡n y Martins
  * @version $Revision: 1.3 $
  */
 
@@ -477,7 +477,7 @@ public class NumberFieldWidget extends BasicWidget {
 	/** Set positions before and after the decimal point */
 	public void setNumber(int positionsBeforeDecimalPoint, int positionsAfterDecimalPoint, double number) {
 
-		// Prüfen ob Punkt und Nachkommastelle
+		// Prï¿½fen ob Punkt und Nachkommastelle
 		if (positionsAfterDecimalPoint <= 0) {
 			this.positionsAfterDecimalPoint = 0;
 			positionDecimalPoint = 0;
@@ -489,7 +489,7 @@ public class NumberFieldWidget extends BasicWidget {
 			showDecimalPoint = true;
 		}
 
-		// Prüfen Vorkommastelle
+		// Prï¿½fen Vorkommastelle
 		if (positionsBeforeDecimalPoint <= 0) {
 			this.positionsBeforeDecimalPoint = 1;
 		}

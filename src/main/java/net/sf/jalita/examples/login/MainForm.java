@@ -2,7 +2,7 @@
  * This software is published under the terms of the LGPL
  * License version 2.1, a copy of which has been included with this
  * distribution in the 'lgpl.txt' file.
- * Author: Daniel Galán y Martins
+ * Author: Daniel GalÃ¡n y Martins
  * Creation date: 05.12.2004 - 18:06:56
  * Revision: $Revision: 1.2 $
  * Checked in by: $Author: danielgalan $
@@ -36,7 +36,7 @@ import net.sf.jalita.ui.widgets.TextFieldWidget;
 /**
  * class desciption. Purpose, functionality, etc..
  * 
- * @author Daniel Galán y Martins
+ * @author Daniel GalÃ¡n y Martins
  * @version $Revision: 1.2 $
  */
 public class MainForm extends BasicForm {
@@ -115,7 +115,7 @@ public class MainForm extends BasicForm {
 		});
 
 		Vector v = new Vector(10);
-		v.add("äöüÄÖÜß");
+		v.add("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 		v.add("Hello");
 		v.add("Hell");
 		v.add("Otaku");
