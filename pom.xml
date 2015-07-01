@@ -3,7 +3,7 @@
 
 	<groupId>de.galan</groupId>
 	<artifactId>jalita</artifactId>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.3.0</version>
 
 	<name>jalita</name>
 	<description>Java Light Terminal Adapter</description>
@@ -23,7 +23,7 @@
 		<connection>scm:git:ssh://github.com/galan/jalita.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/galan/jalita.git</developerConnection>
 		<url>https://github.com/galan/jalita</url>
-		<tag>HEAD</tag>
+		<tag>v1.3.0</tag>
 	</scm>
 
 	<dependencies>
